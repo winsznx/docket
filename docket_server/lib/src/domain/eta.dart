@@ -35,7 +35,7 @@ abstract final class Eta {
   static String text(int seconds, {required bool early}) {
     final m = minutes(seconds);
     final String base;
-    if (m < 5) {
+    if (seconds < 300) {
       base = 'under 5 min';
     } else if (m < 15) {
       base = 'about $m min';

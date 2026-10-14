@@ -86,7 +86,10 @@ abstract final class ClinicAuth {
   static Future<String> displayNameFor(Session session) async {
     final info = session.authenticated;
     if (info == null) return 'Staff';
-    final profile = await info.userProfile(session);
+    final profile = await UserProfile.db.findFirstRow(
+      session,
+      where: (t) => t.authUserId.equals(info.authUserId),
+    );
     return profile?.fullName ?? profile?.userName ?? profile?.email ?? 'Staff';
   }
 }

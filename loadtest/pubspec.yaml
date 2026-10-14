@@ -1,0 +1,16 @@
+name: docket_loadtest
+description: Load, restart and Cloud smoke checks for Docket, run against a live server with the generated client.
+publish_to: none
+
+environment:
+  sdk: '^3.12.2'
+
+resolution: workspace
+
+dependencies:
+  docket_client:
+    path: ../docket_client
+  http: ^1.2.0
+
+dev_dependencies:
+  lints: '>=3.0.0 <7.0.0'

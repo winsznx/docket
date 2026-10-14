@@ -8,4 +8,5 @@ workspace:
   - docket_client
   - docket_server
   - docket_flutter
+  - loadtest
 

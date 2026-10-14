@@ -1,12 +1,11 @@
 {
-    "name": "docket_flutter",
-    "short_name": "docket_flutter",
+    "name": "Docket",
+    "short_name": "Docket",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#FFFFFF",
+    "theme_color": "#FFFFFF",
+    "description": "Your place in the clinic line, live on your phone.",
     "prefer_related_applications": false,
     "icons": [
         {
