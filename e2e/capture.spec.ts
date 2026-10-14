@@ -121,3 +121,29 @@ test('the desk keeps calling offline and every phone catches up', async ({ brows
   await finish(desk.context, desk.page, 'offline-sync-desk.webm');
   await finish(phone.context, phone.page, 'offline-sync-phone.webm');
 });
+
+test('the waiting-room board flashes each call', async ({ browser }) => {
+  const marks = marker('board');
+  const desk = await recorded(browser, 'board-desk', 1280, 800, false);
+  const sandbox = await openSandboxDesk(desk.page);
+  await button(desk.page, 'Add 5 demo walk-ins').click();
+  await desk.page.waitForTimeout(2500);
+  const tvContext = await browser.newContext({
+    viewport: { width: 1280, height: 720 },
+    recordVideo: { dir: join(OUT, 'raw', 'board-tv'), size: { width: 1280, height: 720 } },
+  });
+  const tv = await tvContext.newPage();
+  await tv.goto(sandbox.boardUrl);
+  await tv.waitForTimeout(5000);
+  await tv.mouse.click(640, 360);
+  marks.mark('board ready');
+  await tv.waitForTimeout(2500);
+  for (let i = 0; i < 3; i++) {
+    await button(desk.page, 'Call next').click();
+    marks.mark(`call next ${i + 1}`);
+    await desk.page.waitForTimeout(6000);
+  }
+  marks.save();
+  await finish(desk.context, desk.page, 'board-desk.webm');
+  await finish(tvContext, tv, 'board-tv.webm');
+});
