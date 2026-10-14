@@ -6,6 +6,8 @@ Docket lets walk-in patients wait anywhere. The clinic taps one button, every ph
 
 A screenshot of the line is wrong the moment the doctor calls the next patient.
 
+Watch the 1:43 demo: <https://youtu.be/MdIzNYwsgAQ>. Try it live: <https://docket.serverpod.space/try>.
+
 ![A desk tap moving a patient's phone, recorded on the live app](docs/media/desk-to-phone.gif)
 
 A desk tap moves the patient's phone. Recorded with Playwright on the live app at docket.serverpod.space, desk and phone side by side, sped up as shown.
@@ -24,6 +26,8 @@ A re-slot landing after a server restart isn't recorded as a GIF. It's measured 
 
 - Live app: <https://docket.serverpod.space/try>
 - Site: <https://docket.serverpod.space/>
+- Demo video: <https://youtu.be/MdIzNYwsgAQ>
+- Launch post on X: <https://x.com/winsznx/status/2110485484325531676>
 
 The sandbox is a throwaway clinic with its own desk, board and join link. It needs no account, never sends SMS, holds at most 200 tickets and expires after 24 hours. The next nightly job deletes it. Add 5 demo walk-ins fills the line with tickets labelled DEMO, created through the same join path a patient uses.
 
