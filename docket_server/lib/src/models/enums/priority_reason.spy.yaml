@@ -1,0 +1,9 @@
+enum: PriorityReason
+serialized: byName
+values:
+  - emergency
+  - elderly
+  - pregnant
+  - disability
+  - returningWithResults
+  - staffDiscretion

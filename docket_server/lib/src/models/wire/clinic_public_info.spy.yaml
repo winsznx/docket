@@ -1,0 +1,10 @@
+class: ClinicPublicInfo
+fields:
+  name: String
+  slug: String
+  lines: List<LinePublicInfo>
+  acceptingJoins: bool
+  reasonClosed: String?
+  smsEnabled: bool
+  vapidPublicKey: String
+  isSandbox: bool

@@ -1,0 +1,4 @@
+class: TicketChanged
+fields:
+  ticketId: UuidValue
+  version: int

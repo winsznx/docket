@@ -43,8 +43,11 @@ sessionLogs:
   consoleEnabled: true
 # consoleLogFormat: json # Defaults to "json", options are "text" or "json"
 
-#futureCall:
-#  enabled: true # Defaults to true, set to false to disable scheduling and running future calls
-#  executionEnabled: true # Defaults to true
-#  concurrencyLimit: 1 # Defaults to 1, a negative or null value removes the limit
-#  scanInterval: 5000 # Unit in milliseconds, defaults to 5000
+# Timers live in the database and every podlet scans for due calls once a
+# second, so a grace window ends within about a second of its schedule.
+futureCallExecutionEnabled: true
+futureCall:
+  scanInterval: 1000
+  concurrencyLimit: 8
+  checkBrokenCalls: true
+  deleteBrokenCalls: true

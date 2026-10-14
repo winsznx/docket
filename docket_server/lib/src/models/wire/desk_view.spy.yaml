@@ -1,0 +1,11 @@
+class: DeskView
+fields:
+  clinicId: UuidValue
+  clinicName: String
+  clinicSlug: String
+  isSandbox: bool
+  day: DayState?
+  lines: List<LineView>
+  rooms: List<RoomView>
+  joinUrl: String
+  serverTime: DateTime

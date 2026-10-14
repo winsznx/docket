@@ -1,0 +1,39 @@
+class: Ticket
+table: ticket
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue, relation(parent=clinic, onDelete=Cascade)
+  lineId: UuidValue, relation(parent=line, onDelete=Cascade)
+  serviceDate: String
+  number: int
+  label: String
+  tokenHash: String?, scope=serverOnly
+  displayName: String
+  state: TicketState
+  priorityRank: int, default=1
+  priorityReason: PriorityReason?
+  priorityNote: String?
+  sortKey: double
+  reslotCount: int, default=0
+  callVersion: int, default=0
+  roomId: UuidValue?
+  joinedAt: DateTime
+  calledAt: DateTime?
+  confirmedAt: DateTime?
+  serviceStartedAt: DateTime?
+  finishedAt: DateTime?
+  headsUpSentAt: DateTime?
+  transferredFromTicketId: UuidValue?
+  transferredToTicketId: UuidValue?
+  closedReason: String?
+  transferTokenCipher: String?, scope=serverOnly
+  isDemo: bool, default=false
+indexes:
+  ticket_line_queue_idx:
+    fields: lineId, state, priorityRank, sortKey
+  ticket_line_day_number_idx:
+    fields: lineId, serviceDate, number
+    unique: true
+  ticket_token_idx:
+    fields: tokenHash
+    unique: true

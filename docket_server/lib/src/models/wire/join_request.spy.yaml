@@ -1,0 +1,7 @@
+class: JoinRequest
+fields:
+  clinicSlug: String
+  lineId: UuidValue
+  displayName: String?
+  phoneE164: String?
+  smsConsent: bool

@@ -1,0 +1,13 @@
+class: ServiceDay
+table: service_day
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue, relation(parent=clinic, onDelete=Cascade)
+  serviceDate: String
+  state: DayState
+  openedAt: DateTime
+  closedAt: DateTime?
+indexes:
+  service_day_clinic_date_idx:
+    fields: clinicId, serviceDate
+    unique: true

@@ -1,0 +1,5 @@
+class: StartServiceAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue
+  roomId: UuidValue

@@ -1,0 +1,8 @@
+class: DeskActionResult
+fields:
+  actionId: UuidValue
+  outcome: ActionOutcome
+  code: DocketErrorCode?
+  message: String?
+  ticket: TicketView?
+  ticketUrl: String?

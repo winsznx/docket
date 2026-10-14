@@ -1,0 +1,22 @@
+class: TicketView
+fields:
+  id: UuidValue
+  lineId: UuidValue
+  label: String
+  displayName: String
+  state: TicketState
+  priorityRank: int
+  priorityReason: PriorityReason?
+  priorityNote: String?
+  sortKey: double
+  roomId: UuidValue?
+  calledAt: DateTime?
+  graceEndsAt: DateTime?
+  arrivalEndsAt: DateTime?
+  callVersion: int
+  reslotCount: int
+  isDemo: bool
+  hasPush: bool
+  hasSms: bool
+  pushStatus: DeliveryStatus?
+  smsStatus: DeliveryStatus?

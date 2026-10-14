@@ -1,0 +1,6 @@
+enum: ActionOutcome
+serialized: byName
+values:
+  - applied
+  - rejected
+  - duplicate

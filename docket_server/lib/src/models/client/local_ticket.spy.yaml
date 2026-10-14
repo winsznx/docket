@@ -1,0 +1,19 @@
+class: LocalTicket
+table: local_ticket
+database: client
+fields:
+  id: UuidValue?, defaultModel=random_v7
+  lineId: UuidValue
+  label: String
+  displayName: String
+  state: TicketState
+  priorityRank: int
+  priorityReason: PriorityReason?
+  sortKey: double
+  roomId: UuidValue?
+  calledAt: DateTime?
+  callVersion: int, default=0
+  reslotCount: int, default=0
+  isDemo: bool
+  pendingSync: bool, default=false
+  updatedAt: DateTime

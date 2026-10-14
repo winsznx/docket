@@ -1,0 +1,4 @@
+class: DayReportData
+fields:
+  serviceDate: String
+  lines: List<LineReport>

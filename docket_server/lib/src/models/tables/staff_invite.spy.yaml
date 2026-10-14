@@ -1,0 +1,15 @@
+class: StaffInvite
+table: staff_invite
+serverOnly: true
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue
+  codeHash: String
+  role: StaffRole
+  expiresAt: DateTime
+  acceptedBy: String?
+  acceptedAt: DateTime?
+indexes:
+  staff_invite_code_idx:
+    fields: codeHash
+    unique: true

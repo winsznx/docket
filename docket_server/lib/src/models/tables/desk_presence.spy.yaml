@@ -1,0 +1,15 @@
+class: DeskPresence
+table: desk_presence
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue
+  deviceId: UuidValue
+  roomId: UuidValue?
+  actorRef: String
+  lastSeenAt: DateTime
+indexes:
+  desk_presence_device_idx:
+    fields: deviceId
+    unique: true
+  desk_presence_clinic_idx:
+    fields: clinicId, lastSeenAt

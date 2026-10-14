@@ -1,0 +1,4 @@
+class: FinishAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue

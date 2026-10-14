@@ -1,0 +1,4 @@
+class: CallNextAction
+extends: DeskAction
+fields:
+  roomId: UuidValue

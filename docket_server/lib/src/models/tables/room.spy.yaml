@@ -1,0 +1,9 @@
+class: Room
+table: room
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue, relation(parent=clinic, onDelete=Cascade)
+  lineId: UuidValue, relation(parent=line, onDelete=Cascade)
+  name: String
+  state: RoomState, default=open
+  sortOrder: int, default=0

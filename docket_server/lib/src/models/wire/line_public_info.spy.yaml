@@ -1,0 +1,9 @@
+class: LinePublicInfo
+fields:
+  id: UuidValue
+  name: String
+  code: String
+  waitingCount: int
+  etaMinutesForNewJoin: int?
+  etaText: String
+  acceptingJoins: bool

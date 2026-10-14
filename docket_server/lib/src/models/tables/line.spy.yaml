@@ -1,0 +1,15 @@
+class: Line
+table: line
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue, relation(parent=clinic, onDelete=Cascade)
+  name: String
+  code: String
+  defaultServiceSeconds: int, default=480
+  acceptingJoins: bool, default=true
+  version: int, default=0
+  sortOrder: int, default=0
+indexes:
+  line_clinic_code_idx:
+    fields: clinicId, code
+    unique: true

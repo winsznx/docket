@@ -1,0 +1,4 @@
+class: MarkNoShowAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue

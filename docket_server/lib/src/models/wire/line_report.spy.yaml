@@ -1,0 +1,15 @@
+class: LineReport
+fields:
+  lineName: String
+  joined: int
+  served: int
+  cancelled: int
+  removed: int
+  expired: int
+  reslotted: int
+  waitingNow: int
+  medianWaitSeconds: int?
+  p90WaitSeconds: int?
+  medianServiceSeconds: int?
+  p90ServiceSeconds: int?
+  arrivalsByHour: List<int>

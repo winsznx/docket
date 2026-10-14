@@ -1,0 +1,12 @@
+class: DayReport
+table: day_report
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue
+  serviceDate: String
+  generatedAt: DateTime
+  data: DayReportData, serializationDataType=jsonb
+indexes:
+  day_report_clinic_date_idx:
+    fields: clinicId, serviceDate
+    unique: true

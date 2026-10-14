@@ -1,0 +1,5 @@
+class: RemoveAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue
+  reason: String

@@ -1,0 +1,4 @@
+class: RecallAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue

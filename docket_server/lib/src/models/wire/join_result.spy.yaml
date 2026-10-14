@@ -1,0 +1,4 @@
+class: JoinResult
+fields:
+  ticketToken: String
+  view: PatientView

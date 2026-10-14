@@ -1,0 +1,5 @@
+class: LineChanged
+fields:
+  lineId: UuidValue
+  version: int
+  reason: String

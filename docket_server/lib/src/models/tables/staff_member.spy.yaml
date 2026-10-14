@@ -1,0 +1,14 @@
+class: StaffMember
+table: staff_member
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue, relation(parent=clinic, onDelete=Cascade)
+  userIdentifier: String
+  displayName: String
+  role: StaffRole
+  active: bool, default=true
+  createdAt: DateTime, default=now
+indexes:
+  staff_clinic_user_idx:
+    fields: clinicId, userIdentifier
+    unique: true

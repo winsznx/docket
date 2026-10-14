@@ -1,0 +1,8 @@
+class: BoardView
+fields:
+  clinicName: String
+  rooms: List<BoardRoom>
+  recentCalls: List<BoardCall>
+  waitingByLine: Map<String, int>
+  joinUrl: String
+  serverTime: DateTime

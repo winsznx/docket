@@ -1,0 +1,27 @@
+class: Notification
+table: notification
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  ticketId: UuidValue
+  clinicId: UuidValue
+  ticketLabel: String
+  kind: NotificationKind
+  channel: Channel
+  status: DeliveryStatus
+  dedupeKey: String
+  callVersion: int, default=0
+  attempts: int, default=0
+  providerRef: String?
+  error: String?
+  createdAt: DateTime, default=now
+  sentAt: DateTime?
+indexes:
+  notification_dedupe_idx:
+    fields: dedupeKey
+    unique: true
+  notification_clinic_created_idx:
+    fields: clinicId, createdAt
+  notification_ticket_idx:
+    fields: ticketId
+  notification_provider_ref_idx:
+    fields: providerRef

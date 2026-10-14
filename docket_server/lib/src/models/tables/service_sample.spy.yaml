@@ -1,0 +1,12 @@
+class: ServiceSample
+table: service_sample
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  lineId: UuidValue
+  roomId: UuidValue
+  serviceSeconds: int
+  callToStartSeconds: int
+  at: DateTime
+indexes:
+  service_sample_line_at_idx:
+    fields: lineId, at

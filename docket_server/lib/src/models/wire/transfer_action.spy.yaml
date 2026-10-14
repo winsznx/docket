@@ -1,0 +1,6 @@
+class: TransferAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue
+  targetLineId: UuidValue
+  newTicketId: UuidValue

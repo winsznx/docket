@@ -1,0 +1,5 @@
+class: StaffInviteView
+fields:
+  inviteUrl: String
+  role: StaffRole
+  expiresAt: DateTime

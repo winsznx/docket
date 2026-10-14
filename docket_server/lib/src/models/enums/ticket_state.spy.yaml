@@ -1,0 +1,13 @@
+enum: TicketState
+serialized: byName
+values:
+  - waiting
+  - called
+  - confirmed
+  - inService
+  - served
+  - transferred
+  - cancelled
+  - removed
+  - expired
+  - closed

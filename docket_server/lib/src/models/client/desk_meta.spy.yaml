@@ -1,0 +1,11 @@
+class: DeskMeta
+table: desk_meta
+database: client
+fields:
+  deviceId: UuidValue
+  clinicId: UuidValue?
+  roomId: UuidValue?
+  nextSeq: int, default=1
+  lineVersionsJson: String, default='{}'
+  lastSnapshotAt: DateTime?
+  lastViewJson: String?

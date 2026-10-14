@@ -1,0 +1,8 @@
+enum: ActorType
+serialized: byName
+values:
+  - patient
+  - desk
+  - owner
+  - system
+  - sandbox

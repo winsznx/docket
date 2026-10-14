@@ -1,0 +1,5 @@
+class: CallSpecificAction
+extends: DeskAction
+fields:
+  roomId: UuidValue
+  ticketId: UuidValue

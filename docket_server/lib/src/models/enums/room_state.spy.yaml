@@ -1,0 +1,6 @@
+enum: RoomState
+serialized: byName
+values:
+  - open
+  - paused
+  - closed

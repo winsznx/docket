@@ -1,0 +1,8 @@
+class: OwnerView
+fields:
+  clinic: Clinic
+  lines: List<Line>
+  rooms: List<Room>
+  serviceDate: String
+  day: DayState?
+  smsAvailable: bool

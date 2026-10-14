@@ -1,0 +1,12 @@
+class: OutboxAction
+table: outbox_action
+database: client
+fields:
+  id: UuidValue?, defaultModel=random_v7
+  seq: int
+  actionJson: String
+  createdAt: DateTime
+  outcome: ActionOutcome?
+  code: DocketErrorCode?
+  message: String?
+  settledAt: DateTime?

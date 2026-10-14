@@ -1,0 +1,5 @@
+class: BoardRoom
+fields:
+  roomName: String
+  state: RoomState
+  nowServingLabel: String?

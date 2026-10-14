@@ -1,0 +1,8 @@
+class: RoomView
+fields:
+  id: UuidValue
+  name: String
+  lineId: UuidValue
+  state: RoomState
+  currentTicketId: UuidValue?
+  deskOnline: bool

@@ -1,0 +1,7 @@
+class: ClinicSetup
+fields:
+  name: String
+  slug: String
+  timezone: String
+  lines: List<LineSetup>
+  rooms: List<RoomSetup>

@@ -1,0 +1,15 @@
+class: SmsTarget
+table: sms_target
+serverOnly: true
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  ticketId: UuidValue
+  phoneCipher: String
+  phoneLast4: String
+  consentAt: DateTime
+  linkCipher: String
+  active: bool, default=true
+indexes:
+  sms_target_ticket_idx:
+    fields: ticketId
+    unique: true

@@ -1,0 +1,4 @@
+class: SyncBatch
+fields:
+  deviceId: UuidValue
+  actions: List<DeskAction>

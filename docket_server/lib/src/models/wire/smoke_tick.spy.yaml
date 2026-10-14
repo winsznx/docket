@@ -1,0 +1,5 @@
+class: SmokeTick
+fields:
+  n: int
+  serverTime: DateTime
+  serverId: String

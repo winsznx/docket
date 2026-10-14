@@ -1,0 +1,6 @@
+class: BoardCall
+fields:
+  label: String
+  roomName: String
+  calledAt: DateTime
+  callVersion: int

@@ -1,0 +1,4 @@
+exception: DocketException
+fields:
+  code: DocketErrorCode
+  message: String

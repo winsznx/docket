@@ -1,0 +1,7 @@
+class: AddWalkInAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue
+  lineId: UuidValue
+  displayName: String
+  phoneE164: String?

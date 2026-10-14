@@ -1,0 +1,5 @@
+class: SetRoomStateAction
+extends: DeskAction
+fields:
+  roomId: UuidValue
+  state: RoomState

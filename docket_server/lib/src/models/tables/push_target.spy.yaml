@@ -1,0 +1,15 @@
+class: PushTarget
+table: push_target
+serverOnly: true
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  ticketId: UuidValue
+  endpoint: String
+  p256dh: String
+  authSecret: String
+  linkCipher: String
+  active: bool, default=true
+  createdAt: DateTime, default=now
+indexes:
+  push_target_ticket_idx:
+    fields: ticketId

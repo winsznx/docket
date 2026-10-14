@@ -1,0 +1,7 @@
+class: DeskAction
+sealed: true
+fields:
+  actionId: UuidValue
+  deviceId: UuidValue
+  seq: int
+  issuedAtLocal: DateTime

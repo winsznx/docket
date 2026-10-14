@@ -1,0 +1,17 @@
+class: DeskActionReceipt
+table: desk_action_receipt
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  actionId: UuidValue
+  deviceId: UuidValue
+  seq: int
+  clinicId: UuidValue
+  outcome: ActionOutcome
+  code: DocketErrorCode?
+  message: String?
+  ticketId: UuidValue?
+  appliedAt: DateTime
+indexes:
+  desk_action_receipt_action_idx:
+    fields: actionId
+    unique: true

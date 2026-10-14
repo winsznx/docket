@@ -1,0 +1,33 @@
+class: PatientView
+fields:
+  ticketId: UuidValue
+  clinicName: String
+  label: String
+  lineName: String
+  state: TicketState
+  position: int?
+  etaMinutes: int?
+  etaText: String?
+  etaIsEstimate: bool
+  roomName: String?
+  nowServingLabel: String?
+  nextAfterLabel: String?
+  graceEndsAt: DateTime?
+  arrivalEndsAt: DateTime?
+  graceSeconds: int
+  reslotCount: int
+  maxReslots: int
+  headsUpSent: bool
+  lineMovedAt: DateTime?
+  deskOnline: bool
+  transferredToToken: String?
+  transferredToLabel: String?
+  transferredToLineName: String?
+  closedReason: String?
+  pushActive: bool
+  smsActive: bool
+  smsEnabled: bool
+  smsLast4: String?
+  isDemo: bool
+  serverTime: DateTime
+  version: int

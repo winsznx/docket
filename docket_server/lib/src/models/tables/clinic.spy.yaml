@@ -1,0 +1,28 @@
+class: Clinic
+table: clinic
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  name: String
+  slug: String
+  timezone: String, default='Africa/Lagos'
+  openTime: String, default='08:00'
+  joinCutoffTime: String, default='17:00'
+  closeTime: String, default='18:00'
+  autoCloseAfterMinutes: int, default=120
+  graceSeconds: int, default=180
+  graceReminderSeconds: int, default=60
+  arrivalSeconds: int, default=600
+  headsUpPositions: int, default=2
+  headsUpMinutes: int, default=10
+  reslotOffset: int, default=3
+  maxReslots: int, default=1
+  smsEnabled: bool, default=false
+  isSandbox: bool, default=false
+  sandboxExpiresAt: DateTime?
+  boardTokenHash: String?, scope=serverOnly
+  sandboxTokenHash: String?, scope=serverOnly
+  createdAt: DateTime, default=now
+indexes:
+  clinic_slug_idx:
+    fields: slug
+    unique: true

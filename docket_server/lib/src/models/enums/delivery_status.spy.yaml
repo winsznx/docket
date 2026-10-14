@@ -1,0 +1,9 @@
+enum: DeliveryStatus
+serialized: byName
+values:
+  - queued
+  - sent
+  - failed
+  - skipped
+  - delivered
+  - undelivered

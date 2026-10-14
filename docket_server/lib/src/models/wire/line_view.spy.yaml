@@ -1,0 +1,11 @@
+class: LineView
+fields:
+  id: UuidValue
+  name: String
+  code: String
+  version: int
+  acceptingJoins: bool
+  tickets: List<TicketView>
+  medianServiceSeconds: int
+  sampleCount: int
+  servedToday: int

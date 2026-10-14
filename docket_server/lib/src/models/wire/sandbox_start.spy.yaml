@@ -1,0 +1,8 @@
+class: SandboxStart
+fields:
+  clinicId: UuidValue
+  clinicSlug: String
+  sandboxToken: String
+  boardUrl: String
+  joinUrl: String
+  expiresAt: DateTime

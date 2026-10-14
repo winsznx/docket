@@ -1,0 +1,5 @@
+class: LineSetup
+fields:
+  name: String
+  code: String
+  defaultServiceSeconds: int

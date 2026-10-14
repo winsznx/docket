@@ -1,0 +1,24 @@
+class: TicketEvent
+table: ticket_event
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  clinicId: UuidValue
+  lineId: UuidValue
+  ticketId: UuidValue
+  ticketLabel: String
+  type: TicketEventType
+  fromState: TicketState?
+  toState: TicketState?
+  actor: ActorType
+  actorRef: String?
+  deviceId: UuidValue?
+  actionId: UuidValue?
+  roomId: UuidValue?
+  reason: String?
+  lineVersion: int
+  at: DateTime
+indexes:
+  ticket_event_clinic_at_idx:
+    fields: clinicId, at
+  ticket_event_ticket_idx:
+    fields: ticketId

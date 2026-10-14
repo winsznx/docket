@@ -1,0 +1,11 @@
+enum: NotificationKind
+serialized: byName
+values:
+  - joined
+  - headsUp
+  - called
+  - graceReminder
+  - reslotted
+  - expired
+  - dayClosed
+  - transferred

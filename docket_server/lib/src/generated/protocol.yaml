@@ -9,5 +9,49 @@ emailIdp:
   - hasAccount:
 jwtRefresh:
   - refreshAccessToken:
-greeting:
-  - hello:
+board:
+  - get:
+  - watch:
+desk:
+  - getView:
+  - watch:
+  - act:
+  - sync:
+  - heartbeat:
+  - linkPhone:
+owner:
+  - createClinic:
+  - getOwnerView:
+  - updateSettings:
+  - upsertLine:
+  - upsertRoom:
+  - createInvite:
+  - listStaff:
+  - deactivateStaff:
+  - rotateBoardToken:
+  - dayReport:
+  - dayReportCsv:
+  - audit:
+  - notificationLog:
+publicClinic:
+  - getClinic:
+  - join:
+  - vapidPublicKey:
+sandbox:
+  - start:
+  - addDemoWalkIns:
+smoke:
+  - ticks:
+  - schedule:
+  - runs:
+staff:
+  - myClinics:
+  - acceptInvite:
+ticket:
+  - get:
+  - watch:
+  - confirmComing:
+  - leave:
+  - registerPush:
+  - setPhone:
+  - disableAlerts:

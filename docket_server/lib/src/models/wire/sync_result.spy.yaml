@@ -1,0 +1,4 @@
+class: SyncResult
+fields:
+  results: List<DeskActionResult>
+  view: DeskView

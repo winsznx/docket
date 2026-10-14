@@ -1,0 +1,9 @@
+class: AddPriorityAction
+extends: DeskAction
+fields:
+  ticketId: UuidValue
+  lineId: UuidValue
+  displayName: String
+  reason: PriorityReason
+  note: String?
+  phoneE164: String?

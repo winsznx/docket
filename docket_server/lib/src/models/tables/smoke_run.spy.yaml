@@ -1,0 +1,8 @@
+class: SmokeRun
+table: smoke_run
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  label: String
+  scheduledFor: DateTime
+  firedAt: DateTime?
+  serverId: String?

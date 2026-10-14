@@ -1,0 +1,5 @@
+class: Membership
+fields:
+  clinicId: UuidValue
+  clinicName: String
+  role: StaffRole

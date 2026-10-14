@@ -1,0 +1,22 @@
+enum: TicketEventType
+serialized: byName
+values:
+  - joined
+  - walkInAdded
+  - priorityInserted
+  - called
+  - recalled
+  - confirmed
+  - graceReminderSent
+  - headsUpSent
+  - graceExpired
+  - arrivalExpired
+  - markedNoShow
+  - reslotted
+  - expired
+  - serviceStarted
+  - served
+  - transferred
+  - cancelled
+  - removed
+  - closed

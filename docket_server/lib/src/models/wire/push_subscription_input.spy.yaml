@@ -1,0 +1,5 @@
+class: PushSubscriptionInput
+fields:
+  endpoint: String
+  p256dh: String
+  auth: String

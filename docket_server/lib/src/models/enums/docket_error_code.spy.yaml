@@ -1,0 +1,18 @@
+enum: DocketErrorCode
+serialized: byName
+values:
+  - clinicNotFound
+  - lineNotAccepting
+  - dayClosed
+  - joinCutoffPassed
+  - ticketNotFound
+  - invalidTransition
+  - roomNotOpen
+  - notStaff
+  - notOwner
+  - rateLimited
+  - sandboxExpired
+  - inviteInvalid
+  - smsDisabled
+  - pushInvalid
+  - validation

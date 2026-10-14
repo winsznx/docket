@@ -1,0 +1,4 @@
+class: RoomSetup
+fields:
+  name: String
+  lineCode: String

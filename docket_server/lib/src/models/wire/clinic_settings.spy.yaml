@@ -1,0 +1,15 @@
+class: ClinicSettings
+fields:
+  graceSeconds: int
+  graceReminderSeconds: int
+  arrivalSeconds: int
+  headsUpPositions: int
+  headsUpMinutes: int
+  reslotOffset: int
+  maxReslots: int
+  openTime: String
+  joinCutoffTime: String
+  closeTime: String
+  autoCloseAfterMinutes: int
+  timezone: String
+  smsEnabled: bool

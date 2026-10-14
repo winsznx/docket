@@ -1,0 +1,12 @@
+class: RateBucket
+table: rate_bucket
+serverOnly: true
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  bucketKey: String
+  windowStart: DateTime
+  hits: int
+indexes:
+  rate_bucket_key_window_idx:
+    fields: bucketKey, windowStart
+    unique: true
