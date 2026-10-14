@@ -76,6 +76,12 @@ async function openFlutterPage(page: Page, path: string, readyText: string | Reg
 
 // The semantics tree carries text both as DOM text and as aria-labels.
 async function findJoinPath(page: Page): Promise<string> {
+  // The sandbox the desk opened is in this browser's storage with its join URL.
+  const stored = await page.evaluate(() => window.localStorage.getItem('docket.sandbox'));
+  if (stored) {
+    const joinUrl = (JSON.parse(stored) as { joinUrl?: string }).joinUrl;
+    if (joinUrl) return new URL(joinUrl).pathname;
+  }
   const text = await page.evaluate(() =>
     [
       document.body.innerText,
@@ -145,9 +151,11 @@ test('captures the desk, board, owner and patient screens from the sandbox', asy
   });
   const phone = await phoneContext.newPage();
   await openFlutterPage(phone, joinPath, UI.joinLine.name);
-  await control(phone, UI.patientName).fill(PATIENT_NAME);
+  // A sandbox has two lines, so the patient picks Consultation first.
+  await phone.getByRole('radio', { name: /^Consultation/ }).click();
+  await phone.getByRole('textbox').first().fill(PATIENT_NAME);
   await control(phone, UI.joinLine).click();
-  await expect(phone.getByText(TICKET_READY_TEXT).first()).toBeVisible({ timeout: 30_000 });
+  await expect(phone.locator('flt-semantics-host')).toContainText(TICKET_READY_TEXT, { timeout: 30_000 });
 
   await control(desk, UI.callNext).click();
   await desk.waitForTimeout(1_500);
