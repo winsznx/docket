@@ -58,6 +58,18 @@ class SmokeEndpoint extends Endpoint {
     return run;
   }
 
+  /// Times [count] trivial round trips to the database from this podlet,
+  /// in microseconds each, to separate database latency from network.
+  Future<List<int>> dbPing(Session session, int count) async {
+    final times = <int>[];
+    for (var i = 0; i < count.clamp(1, 50); i++) {
+      final sw = Stopwatch()..start();
+      await session.db.unsafeSimpleQuery('SELECT 1');
+      times.add(sw.elapsedMicroseconds);
+    }
+    return times;
+  }
+
   Future<List<SmokeRun>> runs(Session session) => SmokeRun.db.find(
     session,
     orderBy: (t) => t.scheduledFor.desc(),

@@ -6,6 +6,7 @@ import '../generated/protocol.dart';
 import '../security/phone.dart';
 import '../security/tokens.dart';
 import '../strings.dart';
+import '../util/ttl_cache.dart';
 import 'actor.dart';
 import 'clinic_time.dart';
 import 'eta.dart';
@@ -28,6 +29,12 @@ import 'views.dart';
 /// 30-second timer sweep covers a crash in that gap.
 abstract final class QueueService {
   static const int maxJoinsPerClinicDay = 2000;
+
+  // Serverpod Cloud measured about 50 ms per database round trip from the
+  // podlet (docs/SPONSOR_FINDINGS.md F7), so the hot path caches what
+  // rarely changes. Each cache lives on this podlet only.
+  static final _medians = TtlCache<UuidValue, int>(const Duration(seconds: 30));
+  static final _openDays = TtlCache<String, bool>(const Duration(seconds: 30));
   static const int maxSandboxTickets = 200;
 
   // ---------------------------------------------------------------- patient
@@ -183,9 +190,7 @@ abstract final class QueueService {
         return applied;
       });
       await _afterCommit(session, fx);
-      final ticket = outcome.ticket == null
-          ? null
-          : await Ticket.db.findById(session, outcome.ticket!.id!);
+      final ticket = outcome.ticket;
       session.log(
         '[queue] ${action.runtimeType} applied ${ticket?.label ?? ''}',
         level: LogLevel.info,
@@ -302,6 +307,7 @@ abstract final class QueueService {
           room,
           queue.first,
           actor,
+          waitingAfter: queue.skip(1).toList(),
         );
         return _Applied(called);
 
@@ -852,7 +858,7 @@ abstract final class QueueService {
     transaction: t,
   );
 
-  static Future<ServiceDay> _ensureDay(
+  static Future<void> _ensureDay(
     Session session,
     Transaction t,
     _Effects fx,
@@ -861,12 +867,26 @@ abstract final class QueueService {
   }) async {
     final now = DateTime.now().toUtc();
     final date = ClinicTime.serviceDate(clinic.timezone, now);
+    final minutes = ClinicTime.localMinutes(clinic.timezone, now);
+    final key = '${clinic.id}:$date';
+    void checkCutoff() {
+      if (forJoin && minutes >= ClinicTime.minutesOf(clinic.joinCutoffTime)) {
+        throw DocketException(
+          code: DocketErrorCode.joinCutoffPassed,
+          message: Copy.cutoffPassed(clinic.name, clinic.joinCutoffTime),
+        );
+      }
+    }
+
+    if (_openDays.has(key)) {
+      checkCutoff();
+      return;
+    }
     final existing = await ServiceDay.db.findFirstRow(
       session,
       where: (x) => x.clinicId.equals(clinic.id!) & x.serviceDate.equals(date),
       transaction: t,
     );
-    final minutes = ClinicTime.localMinutes(clinic.timezone, now);
     if (existing != null) {
       if (existing.state == DayState.closed) {
         throw DocketException(
@@ -882,13 +902,11 @@ abstract final class QueueService {
         message: Copy.notOpenYet(clinic.name, clinic.openTime),
       );
     }
-    if (forJoin && minutes >= ClinicTime.minutesOf(clinic.joinCutoffTime)) {
-      throw DocketException(
-        code: DocketErrorCode.joinCutoffPassed,
-        message: Copy.cutoffPassed(clinic.name, clinic.joinCutoffTime),
-      );
+    checkCutoff();
+    if (existing != null) {
+      _openDays.put(key, true);
+      return;
     }
-    if (existing != null) return existing;
 
     await ServiceDay.db.insert(
       session,
@@ -903,11 +921,6 @@ abstract final class QueueService {
       ignoreConflicts: true,
       transaction: t,
     );
-    final day = (await ServiceDay.db.findFirstRow(
-      session,
-      where: (x) => x.clinicId.equals(clinic.id!) & x.serviceDate.equals(date),
-      transaction: t,
-    ))!;
     final closeAt = ClinicTime.atLocal(
       clinic.timezone,
       date,
@@ -921,8 +934,8 @@ abstract final class QueueService {
           .clinicJobs
           .autoCloseDay(clinicId, date),
     );
+    fx.openedDays.add(key);
     fx.clinicChanged.add(clinicId);
-    return day;
   }
 
   static Future<({Ticket ticket, String token})> _addTicket(
@@ -1097,10 +1110,10 @@ abstract final class QueueService {
     Clinic clinic,
     Line line,
     Room room,
-    Ticket candidate,
-    Actor actor,
-  ) async {
-    final ticket = await _ticket(session, t, candidate.id!);
+    Ticket ticket,
+    Actor actor, {
+    List<Ticket>? waitingAfter,
+  }) async {
     _guard(TicketCommand.callNext, ticket);
     if (room.state != RoomState.open) {
       throw DocketException(
@@ -1155,7 +1168,14 @@ abstract final class QueueService {
           .ticketTimers
           .graceExpired(id, version),
     );
-    await _headsUpCheck(session, t, fx, clinic, bumped);
+    await _headsUpCheck(
+      session,
+      t,
+      fx,
+      clinic,
+      bumped,
+      waiting: waitingAfter,
+    );
     return called;
   }
 
@@ -1465,6 +1485,7 @@ abstract final class QueueService {
       );
     }
     fx.cancels.add('autoclose:${clinic.id}:$date');
+    _openDays.invalidate('${clinic.id}:$date');
     fx.clinicChanged.add(clinic.id!);
   }
 
@@ -1477,6 +1498,7 @@ abstract final class QueueService {
     final started = ticket.serviceStartedAt;
     if (started == null || ticket.roomId == null) return;
     final called = ticket.calledAt ?? started;
+    _medians.invalidate(ticket.lineId);
     await ServiceSample.db.insertRow(
       session,
       ServiceSample(
@@ -1502,22 +1524,26 @@ abstract final class QueueService {
     Transaction t,
     _Effects fx,
     Clinic clinic,
-    Line line,
-  ) async {
+    Line line, {
+    List<Ticket>? waiting,
+  }) async {
     final date = LineQueue.serviceDateNow(clinic);
-    final queue = await LineQueue.waiting(session, t, line.id!, date);
+    final queue =
+        waiting ?? await LineQueue.waiting(session, t, line.id!, date);
     if (queue.isEmpty) return;
-    final samples = await ServiceSample.db.find(
-      session,
-      where: (x) => x.lineId.equals(line.id!),
-      orderBy: (x) => x.at.desc(),
-      limit: Eta.samplesForMedian,
-      transaction: t,
-    );
-    final median = Eta.medianServiceSeconds(
-      samples.map((s) => s.serviceSeconds).toList(),
-      line.defaultServiceSeconds,
-    );
+    final median = await _medians.get(line.id!, () async {
+      final samples = await ServiceSample.db.find(
+        session,
+        where: (x) => x.lineId.equals(line.id!),
+        orderBy: (x) => x.at.desc(),
+        limit: Eta.samplesForMedian,
+        transaction: t,
+      );
+      return Eta.medianServiceSeconds(
+        samples.map((s) => s.serviceSeconds).toList(),
+        line.defaultServiceSeconds,
+      );
+    });
     final presence = await Views.presence(session, line);
     final now = DateTime.now().toUtc();
     for (var i = 0; i < queue.length; i++) {
@@ -1559,20 +1585,20 @@ abstract final class QueueService {
     NotificationKind kind, {
     String? suffix,
   }) async {
-    final push = await PushTarget.db.findFirstRow(
-      session,
-      where: (x) => x.ticketId.equals(ticket.id!) & x.active.equals(true),
+    final targets = await session.db.unsafeQuery(
+      'SELECT '
+      '(SELECT count(*) FROM push_target WHERE "ticketId" = @id::uuid AND active), '
+      '(SELECT count(*) FROM sms_target WHERE "ticketId" = @id::uuid AND active)',
+      parameters: QueryParameters.named({'id': ticket.id.toString()}),
       transaction: t,
     );
-    final sms = await SmsTarget.db.findFirstRow(
-      session,
-      where: (x) => x.ticketId.equals(ticket.id!) & x.active.equals(true),
-      transaction: t,
-    );
+    final row = targets.first;
+    final pushActive = (row[0] as int) > 0;
+    final smsActive = (row[1] as int) > 0;
     final channels = NotificationPolicy.channels(
       kind: kind,
-      pushActive: push != null,
-      smsActive: sms != null && clinic.smsEnabled && !clinic.isSandbox,
+      pushActive: pushActive,
+      smsActive: smsActive && clinic.smsEnabled && !clinic.isSandbox,
     );
     for (final channel in channels) {
       final rows = await Notification.db.insert(
@@ -1659,6 +1685,9 @@ abstract final class QueueService {
   /// the commit, so a failure here is logged and left to the sweeps and the
   /// 20-second stream heartbeat (PRD 10).
   static Future<void> _afterCommit(Session session, _Effects fx) async {
+    for (final key in fx.openedDays) {
+      _openDays.put(key, true);
+    }
     if (Timers.scheduling(session.serverpod)) {
       await _scheduleTimers(session, fx);
     }
@@ -1748,4 +1777,5 @@ class _Effects {
   final notifications = <UuidValue>[];
   final after = <Future<void> Function(Session)>[];
   final cancels = <String>{};
+  final openedDays = <String>{};
 }

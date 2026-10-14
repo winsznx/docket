@@ -164,7 +164,7 @@ abstract final class Views {
     Clinic clinic,
   ) async => LineQueue.serviceDateNow(clinic);
 
-  static final _clinics = TtlCache<UuidValue, Clinic>(
+  static final _clinics = TtlCache<UuidValue, Clinic?>(
     const Duration(seconds: 5),
   );
   static final _presence = TtlCache<UuidValue, LinePresence>(
@@ -174,8 +174,14 @@ abstract final class Views {
     const Duration(seconds: 30),
   );
 
-  static Future<Clinic> clinic(Session session, UuidValue id) =>
-      _clinics.get(id, () async => (await Clinic.db.findById(session, id))!);
+  static void clinicChanged(UuidValue id) => _clinics.invalidate(id);
+
+  static Future<Clinic> clinic(Session session, UuidValue id) async =>
+      (await clinicOrNull(session, id))!;
+
+  /// A clinic read through a 5-second cache that owner changes invalidate.
+  static Future<Clinic?> clinicOrNull(Session session, UuidValue id) =>
+      _clinics.get(id, () => Clinic.db.findById(session, id));
 
   /// Rooms that count for the ETA and the patient's desk-offline banner:
   /// open rooms of the line with a desk heartbeat in the last 45 seconds.

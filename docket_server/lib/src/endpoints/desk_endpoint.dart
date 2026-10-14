@@ -7,6 +7,7 @@ import '../domain/views.dart';
 import '../generated/protocol.dart';
 import '../security/clinic_auth.dart';
 import '../util/coalesce.dart';
+import '../util/ttl_cache.dart';
 
 /// The desk. `requireLogin` stays false so sandbox tokens work, and every
 /// method authorizes through [ClinicAuth.desk] first (PRD 9.3).
@@ -199,13 +200,31 @@ class DeskEndpoint extends Endpoint {
     return linked.url;
   }
 
+  /// Rooms, lines and tickets never move between clinics, so which clinic
+  /// an action belongs to is cached for a minute.
+  static final _owners = TtlCache<UuidValue, UuidValue?>(
+    const Duration(minutes: 1),
+  );
+
   static Future<UuidValue> _clinicOf(Session session, DeskAction action) async {
     Future<UuidValue> ofRoom(UuidValue id) async =>
-        (await Room.db.findById(session, id))?.clinicId ?? _missing();
+        await _owners.get(
+          id,
+          () async => (await Room.db.findById(session, id))?.clinicId,
+        ) ??
+        _missing();
     Future<UuidValue> ofLine(UuidValue id) async =>
-        (await Line.db.findById(session, id))?.clinicId ?? _missing();
+        await _owners.get(
+          id,
+          () async => (await Line.db.findById(session, id))?.clinicId,
+        ) ??
+        _missing();
     Future<UuidValue> ofTicket(UuidValue id) async =>
-        (await Ticket.db.findById(session, id))?.clinicId ?? _missing();
+        await _owners.get(
+          id,
+          () async => (await Ticket.db.findById(session, id))?.clinicId,
+        ) ??
+        _missing();
     return switch (action) {
       CallNextAction(:final roomId) => ofRoom(roomId),
       CallSpecificAction(:final roomId) => ofRoom(roomId),

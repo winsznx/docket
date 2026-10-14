@@ -694,6 +694,15 @@ class EndpointSmoke extends _isc.EndpointRef {
         {'delaySeconds': delaySeconds},
       );
 
+  /// Times [count] trivial round trips to the database from this podlet,
+  /// in microseconds each, to separate database latency from network.
+  _ida.Future<List<int>> dbPing(int count) =>
+      caller.callServerEndpoint<List<int>>(
+        'smoke',
+        'dbPing',
+        {'count': count},
+      );
+
   _ida.Future<List<_ifwjb9hw.SmokeRun>> runs() =>
       caller.callServerEndpoint<List<_ifwjb9hw.SmokeRun>>(
         'smoke',

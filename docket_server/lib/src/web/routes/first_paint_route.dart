@@ -29,7 +29,8 @@ class FirstPaintRoute extends Route {
         'serverTime': view.serverTime.toIso8601String(),
       });
     } on DocketException catch (e) {
-      return _json(404, {'error': e.message});
+      // 410, since FlutterRoute's fallback answers any 404 with the app.
+      return _json(410, {'error': e.message});
     }
   }
 

@@ -2498,6 +2498,9 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
     if (t == List<_ihlom2lm.SmokeRun>) {
       return (data as List)
               .map((e) => deserialize<_ihlom2lm.SmokeRun>(e))

@@ -12,7 +12,7 @@ class TwilioStatusRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
     final token = session.passwords['twilioAuthToken'];
-    if (token == null || token.isEmpty) return Response.notFound();
+    if (token == null || token.isEmpty) return Response(503);
     final body = await request.readAsString();
     final params = Uri.splitQueryString(body);
     final signature = request.headers['X-Twilio-Signature']?.firstOrNull ?? '';

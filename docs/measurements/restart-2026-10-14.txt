@@ -1,0 +1,25 @@
+# Restart test, local, 2026-10-14, loadtest/bin/restart.dart, 60 s grace, server killed about 22 s into the window and restarted
+=== run 1 19:01:06
+stopping server 19:01:30
+starting server 19:01:38
+server up 19:01:47
+RESLOTTED position 3 landed 401 ms after the scheduled grace end
+=== run 2 19:02:14
+stopping server 19:02:36
+starting server 19:02:44
+server up 19:02:53
+RESLOTTED position 3 landed 773 ms after the scheduled grace end
+=== run 3 19:03:22
+stopping server 19:03:44
+starting server 19:03:52
+server up 19:04:01
+RESLOTTED position 3 landed 784 ms after the scheduled grace end
+
+[exited with code 0]
+
+# Cloud, 2026-10-14 18:13 UTC, 180 s grace, serverpod cloud deploy --redeploy requested at 18:13:29, new pod docket-primary-86f5bcd78f-qp45b initialized 18:14:44, grace end 18:16:27.870
+Running build hooks...Running build hooks...CALLED grace ends 2026-10-14T18:16:27.870675Z
+RESLOTTED position 3 landed 1148 ms after the scheduled grace end
+
+# Local with SERVERPOD_FUTURE_CALL_ENABLED=false, in-process sweep, 60 s grace, no restart
+RESLOTTED position 3 landed 1132 ms after the scheduled grace end

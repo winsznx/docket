@@ -1,0 +1,3 @@
+# Load test, local, 2026-10-14, loadtest/bin/load.dart http://localhost:8080/ 300 15
+# MacBook M1 Pro, embedded Postgres, server and 300 clients on the same machine
+streams=300 calls=15 samples=4500 p50=180ms p90=192ms p95=196ms p99=206ms max=209ms

@@ -30,5 +30,15 @@ class TtlCache<K, V> {
     return future;
   }
 
+  bool has(K key) {
+    final hit = _entries[key];
+    return hit != null && hit.expires.isAfter(DateTime.now());
+  }
+
+  void put(K key, V value) => _entries[key] = (
+    expires: DateTime.now().add(lifetime),
+    value: Future<V>.value(value),
+  );
+
   void invalidate(K key) => _entries.remove(key);
 }

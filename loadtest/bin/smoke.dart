@@ -39,6 +39,14 @@ Future<void> main(List<String> args) async {
           'idle stream dropped after ${DateTime.now().difference(opened).inSeconds} s: $e',
         );
       }
+    case 'dbping':
+      final times = await client.smoke.dbPing(20)
+        ..sort();
+      stdout.writeln(
+        'db round trip from the podlet over 20 queries: '
+        'min ${times.first} us, median ${times[times.length ~/ 2]} us, '
+        'max ${times.last} us',
+      );
     case 'schedule':
       final run = await client.smoke.schedule(int.parse(args[2]));
       stdout.writeln('scheduled ${run.id} for ${run.scheduledFor.toIso8601String()}');

@@ -4,6 +4,7 @@ import '../app_config.dart';
 import '../domain/clinic_time.dart';
 import '../domain/line_queue.dart';
 import '../domain/reports.dart';
+import '../domain/views.dart';
 import '../generated/protocol.dart';
 import '../security/clinic_auth.dart';
 import '../security/tokens.dart';
@@ -517,9 +518,11 @@ class OwnerEndpoint extends Endpoint {
     'Pick a date.',
   );
 
-  static Future<void> _clinicChanged(Session session, UuidValue clinicId) =>
-      session.messages.postMessage(
-        'clinic.$clinicId',
-        ClinicChanged(clinicId: clinicId),
-      );
+  static Future<void> _clinicChanged(Session session, UuidValue clinicId) {
+    Views.clinicChanged(clinicId);
+    return session.messages.postMessage(
+      'clinic.$clinicId',
+      ClinicChanged(clinicId: clinicId),
+    );
+  }
 }

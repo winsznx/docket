@@ -2,6 +2,7 @@ import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 
 import '../domain/actor.dart';
+import '../domain/views.dart';
 import '../generated/protocol.dart';
 import '../strings.dart';
 import 'tokens.dart';
@@ -15,7 +16,8 @@ abstract final class ClinicAuth {
     Session session,
     UuidValue clinicId,
     String? sandboxToken,
-  ) => _require(session, clinicId, sandboxToken, ownerOnly: false);
+  ) =>
+      _require(session, clinicId, sandboxToken, ownerOnly: false, cached: true);
 
   /// A signed-in owner of the clinic, or a sandbox token (PRD 9.5).
   static Future<({Clinic clinic, Actor actor})> owner(
@@ -29,8 +31,14 @@ abstract final class ClinicAuth {
     UuidValue clinicId,
     String? sandboxToken, {
     required bool ownerOnly,
+    bool cached = false,
   }) async {
-    final clinic = await Clinic.db.findById(session, clinicId);
+    // The desk path reads the clinic through a 5-second cache that owner
+    // changes invalidate. The owner path always reads it fresh, since it
+    // writes the row back.
+    final clinic = cached
+        ? await Views.clinicOrNull(session, clinicId)
+        : await Clinic.db.findById(session, clinicId);
     if (clinic == null) {
       throw DocketException(
         code: DocketErrorCode.clinicNotFound,

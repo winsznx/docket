@@ -975,6 +975,9 @@ class Protocol extends _isd.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toList() as T;
+    }
     if (t == List<_ifwjb9hw.SmokeRun>) {
       return (data as List)
               .map((e) => deserialize<_ifwjb9hw.SmokeRun>(e))

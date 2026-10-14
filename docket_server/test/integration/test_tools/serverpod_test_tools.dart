@@ -1678,6 +1678,37 @@ class _SmokeEndpoint {
     });
   }
 
+  _ida.Future<List<int>> dbPing(
+    _ist.TestSessionBuilder sessionBuilder,
+    int count,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'smoke',
+            method: 'dbPing',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'smoke',
+          methodName: 'dbPing',
+          parameters: _ist.testObjectToJson({'count': count}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<List<int>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _ida.Future<List<_ihlom2lm.SmokeRun>> runs(
     _ist.TestSessionBuilder sessionBuilder,
   ) async {

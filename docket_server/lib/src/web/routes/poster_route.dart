@@ -28,14 +28,14 @@ class PosterRoute extends Route {
       session,
       where: (t) => t.slug.equals(slug),
     );
-    if (clinic == null) return Response.notFound();
+    if (clinic == null) return _gone();
     final code = (request.queryParameters.raw['line'] ?? '').toUpperCase();
     final lines = await Line.db.find(
       session,
       where: (t) => t.clinicId.equals(clinic.id!),
       orderBy: (t) => t.sortOrder,
     );
-    if (lines.isEmpty) return Response.notFound();
+    if (lines.isEmpty) return _gone();
     final line = lines.firstWhere(
       (l) => l.code == code,
       orElse: () => lines.first,
@@ -53,6 +53,13 @@ class PosterRoute extends Route {
       body: Body.fromData(bytes, mimeType: MimeType.pdf),
     );
   }
+
+  /// 410 rather than 404, since FlutterRoute's fallback answers any 404
+  /// with the app.
+  static Response _gone() => Response(
+    410,
+    body: Body.fromString("There's no clinic or line at that poster link."),
+  );
 
   static Future<Uint8List> build(String clinic, String line, String url) async {
     _regular ??= _font('AtkinsonHyperlegibleNext-Regular.ttf');
