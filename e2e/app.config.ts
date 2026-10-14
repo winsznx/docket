@@ -9,6 +9,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: '.',
   testMatch: /app-sweep\.spec\.ts$/,
+  globalSetup: './app-setup.ts',
   fullyParallel: true,
   workers: 4,
   retries: 0,

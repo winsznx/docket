@@ -36,18 +36,20 @@ test('a stranger goes from /try to a called phone without an account', async ({ 
   const phone = await phoneContext.newPage();
   await phone.goto(sandbox.joinUrl);
   await enableSemantics(phone);
+  await phone.getByRole('radio', { name: /^Consultation/ }).click();
   await phone.getByRole('textbox').first().fill('Ada');
   await button(phone, 'Join the line').click();
   await expect(phone).toHaveURL(/\/t\/[A-Za-z0-9_-]+$/, { timeout: 30_000 });
-  await enableSemantics(phone);
-  await expect(said(phone, 'C-001')).toBeAttached({ timeout: 30_000 });
+  // The ticket reads its label the way it's spoken, "C 1".
+  const spoken = phone.locator('flt-semantics-host');
+  await expect(spoken).toContainText(/C 1\s*Consultation|C-001/, { timeout: 30_000 });
   await phone.screenshot({ path: join(SCREENS, 'phone-waiting.png') });
 
   const callNext = button(desk, 'Call next');
   await expect(callNext).toBeEnabled({ timeout: 30_000 });
   const pressed = Date.now();
   await callNext.click();
-  await expect(said(phone, /Your turn\. Go to /)).toBeAttached({ timeout: 15_000 });
+  await expect(spoken).toContainText(/Your turn\. Go to /, { timeout: 15_000 });
   const seen = Date.now() - pressed;
   appendFileSync(LOG, `${new Date().toISOString()} ${test.info().project.name} desk click to phone text ${seen} ms\n`);
   await phone.screenshot({ path: join(SCREENS, 'phone-called.png') });

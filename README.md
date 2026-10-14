@@ -6,15 +6,21 @@ Docket lets walk-in patients wait anywhere. The clinic taps one button, every ph
 
 A screenshot of the line is wrong the moment the doctor calls the next patient.
 
-Film and GIFs: see the submission page.
+![A desk tap moving a patient's phone, recorded on the live app](docs/media/desk-to-phone.gif)
+
+A desk tap moves the patient's phone. Recorded with Playwright on the live app at docket.serverpod.space, desk and phone side by side, sped up as shown.
+
+![The desk keeps calling offline and the phone catches up on reconnect](docs/media/offline-sync.gif)
+
+The desk loses its connection, keeps calling, and syncs when it's back. The phone catches up. Same recording setup.
+
+A re-slot landing after a server restart isn't recorded as a GIF. It's measured instead, see below.
 
 ## Try it
 
-The timings below are targets. They haven't been measured yet, and they'll move to [docs/SPONSOR_BEHAVIOUR.md](docs/SPONSOR_BEHAVIOUR.md) once they are.
-
 1. Open <https://docket.serverpod.space/try> and tap Open my sandbox desk. Target: about 5 s.
 2. Scan the join QR beside the desk with your phone and join the line. Target: about 10 s.
-3. Tap Call next on the desk. The phone changes. Target: about a second.
+3. Tap Call next on the desk. The phone changes. Measured from Lagos against Serverpod Cloud's small compute: 2.7 s from the click to the phone's text in one Playwright run. The same path takes about 1 s against a local server. Why, and what fixes it: [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
 
 - Live app: <https://docket.serverpod.space/try>
 - Site: <https://docket.serverpod.space/>
@@ -84,7 +90,13 @@ From the repo root:
 
 ## Measured numbers
 
-Every number Docket publishes comes from a recorded run with its run count, and lives in [docs/SPONSOR_BEHAVIOUR.md](docs/SPONSOR_BEHAVIOUR.md). Nothing is listed here until it's measured.
+Every number Docket publishes comes from a recorded run with its run count. The full table and the raw readings are in [docs/SPONSOR_BEHAVIOUR.md](docs/SPONSOR_BEHAVIOUR.md).
+
+- A server restart inside a 60-second grace window: the missed call still went back in line 401, 773 and 784 ms after the window closed (3 runs, local). On Serverpod Cloud, with a redeploy inside a 180-second window: 1148 ms (1 run).
+- 300 patient streams on one line with a call every 2 seconds: p50 180 ms, p95 196 ms, max 209 ms from the desk's action to each phone (4,500 samples, local, server and clients on one M1 Pro).
+- Fifty pairs of Call next fired together from two desks: 40 distinct tickets called, 60 "No one is waiting", zero duplicates (integration test).
+- Idle streams on Serverpod Cloud with the default 30-second ping: 2 of 3 lived a full 600 s, 1 closed at 562 s and reconnects on its own.
+- On Serverpod Cloud's small compute, server work runs about 21 times slower than on the M1 Pro (a fixed CPU loop: 805 ms against 38 ms), so tap-to-phone there is a few seconds. See [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
 
 ## Limits
 

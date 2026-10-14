@@ -382,32 +382,38 @@ class _TicketScreenState extends State<TicketScreen> {
                         slivers: [
                           SliverFillRemaining(
                             hasScrollBody: false,
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                DocketSpace.s16,
-                                band == null ? 0 : DocketSpace.s16,
-                                DocketSpace.s16,
-                                DocketSpace.s12,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Expanded(child: face),
-                                  if (view != null && phase!.isActive) ...[
-                                    if (alertsOn) ...[
-                                      const SizedBox(height: DocketSpace.s32),
-                                      _AlertsOn(
-                                        view: view,
-                                        busy: _busy == _Busy.alertsOff,
-                                        onTurnOff: _busy == null
-                                            ? _turnOffAlerts
-                                            : null,
-                                      ),
+                            // Focusable, so a keyboard can reach the region
+                            // and scroll it with the arrow and page keys
+                            // when the ticket's words outgrow the screen.
+                            child: Focus(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  DocketSpace.s16,
+                                  band == null ? 0 : DocketSpace.s16,
+                                  DocketSpace.s16,
+                                  DocketSpace.s12,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(child: face),
+                                    if (view != null && phase!.isActive) ...[
+                                      if (alertsOn) ...[
+                                        const SizedBox(height: DocketSpace.s32),
+                                        _AlertsOn(
+                                          view: view,
+                                          busy: _busy == _Busy.alertsOff,
+                                          onTurnOff: _busy == null
+                                              ? _turnOffAlerts
+                                              : null,
+                                        ),
+                                      ],
+                                      const SizedBox(height: DocketSpace.s24),
+                                      _Quiet(PatientStrings.linkWarning),
                                     ],
-                                    const SizedBox(height: DocketSpace.s24),
-                                    _Quiet(PatientStrings.linkWarning),
                                   ],
-                                ],
+                                ),
                               ),
                             ),
                           ),

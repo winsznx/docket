@@ -106,7 +106,8 @@ class DeskController extends ChangeNotifier {
       _view = store.lastView(meta);
       _latestServerTime = _view?.serverTime;
       roomId = meta.roomId;
-    } on Object catch (e) {
+    } on Object catch (e, stack) {
+      debugPrint('Docket desk storage failed to open: $e\n$stack');
       openError = e;
       _notify();
       return;

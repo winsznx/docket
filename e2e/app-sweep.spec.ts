@@ -1,10 +1,11 @@
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-const API_URL = (process.env.APP_API_URL ?? 'http://localhost:8080').replace(/\/$/, '');
+import { FIXTURE_FILE } from './app-setup';
+
 const SCREENS = join(__dirname, 'screens', 'app');
 mkdirSync(SCREENS, { recursive: true });
 
@@ -15,37 +16,8 @@ const SIZES: Array<[number, number]> = [
 
 type Fixture = { sandboxRaw: string; slug: string; ticketToken: string; boardToken: string };
 
-let fixture: Fixture | undefined;
-
-async function call<T>(request: APIRequestContext, endpoint: string, method: string, args: object): Promise<T> {
-  const response = await request.post(`${API_URL}/${endpoint}/${method}`, { data: args });
-  const body = await response.text();
-  if (!response.ok()) throw new Error(`${endpoint}.${method} ${response.status()}: ${body}`);
-  return JSON.parse(body) as T;
-}
-
-/** One sandbox and one ticket shared by the whole sweep, made through the real API. */
-async function setUp(request: APIRequestContext): Promise<Fixture> {
-  if (fixture) return fixture;
-  const sandbox = await call<Record<string, string>>(request, 'sandbox', 'start', {});
-  const info = await call<{ lines: Array<{ id: string }> }>(request, 'publicClinic', 'getClinic', {
-    slug: sandbox.clinicSlug,
-  });
-  await call(request, 'sandbox', 'addDemoWalkIns', {
-    sandboxToken: sandbox.sandboxToken,
-    lineId: info.lines[0].id,
-    count: 3,
-  });
-  const joined = await call<{ ticketToken: string }>(request, 'publicClinic', 'join', {
-    request: { clinicSlug: sandbox.clinicSlug, lineId: info.lines[0].id, displayName: 'Sweep', smsConsent: false },
-  });
-  fixture = {
-    sandboxRaw: JSON.stringify(sandbox),
-    slug: sandbox.clinicSlug,
-    ticketToken: joined.ticketToken,
-    boardToken: new URL(sandbox.boardUrl).pathname.split('/').pop()!,
-  };
-  return fixture;
+function loadFixture(): Fixture {
+  return JSON.parse(readFileSync(FIXTURE_FILE, 'utf8')) as Fixture;
 }
 
 async function enableSemantics(page: Page): Promise<void> {
@@ -72,8 +44,8 @@ for (const scheme of ['light', 'dark'] as const) {
     test.describe(`${scheme} ${width}x${height}`, () => {
       test.use({ viewport: { width, height }, colorScheme: scheme });
       for (const route of ROUTES) {
-        test(route.name, async ({ page, request }, info) => {
-          const f = await setUp(request);
+        test(route.name, async ({ page }, info) => {
+          const f = loadFixture();
           if (route.sandbox) {
             await page.addInitScript((raw) => window.localStorage.setItem('docket.sandbox', raw), f.sandboxRaw);
           }
