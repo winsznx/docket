@@ -13,6 +13,9 @@ jobs:
       VERSION: '4.0.4'
       SERVERPOD_PASSWORD_database: 'gOFXGXS9Qr5-KccftpNtkpZmhVy4HBIZ'
       SERVERPOD_PASSWORD_redis: '1P6dvJEoPhvohrzacp5xN5mDwXUuoT1h'
+      # Test-only AES key for the throwaway CI database. It seals nothing
+      # outside this job and is used nowhere else.
+      SERVERPOD_PASSWORD_phoneEncryptionKey: 'G2dzUcL/Wlb1Al6mmT01tTp1YF7iq0QoV27n5iYa72Q='
 
     steps:
       - uses: actions/checkout@v4
