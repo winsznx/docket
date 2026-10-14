@@ -31,7 +31,7 @@ class SandboxEndpoint extends Endpoint {
       final clinic = await Clinic.db.insertRow(
         session,
         Clinic(
-          name: 'Sandbox Clinic $suffix',
+          name: 'Sandbox clinic',
           slug: slug,
           openTime: '00:00',
           joinCutoffTime: '23:59',

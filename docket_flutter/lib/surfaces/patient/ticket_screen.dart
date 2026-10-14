@@ -499,6 +499,17 @@ class _TicketScreenState extends State<TicketScreen> {
           icon: LucideIcons.ticket,
           onPressed: () => _goTo(nextToken),
         ),
+      if (const {
+        TicketState.served,
+        TicketState.cancelled,
+        TicketState.removed,
+        TicketState.expired,
+      }.contains(view.state))
+        SecondaryPill(
+          label: PatientStrings.goHome,
+          icon: LucideIcons.house,
+          onPressed: patientBrowser.openHome,
+        ),
     ];
   }
 }

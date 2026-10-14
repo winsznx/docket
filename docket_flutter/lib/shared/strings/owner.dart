@@ -270,8 +270,8 @@ abstract final class OwnerStrings {
       : 'Arrivals by hour. $total in all, busiest at $busiest with $peak.';
   static String arrivalsCell(int n) => n == 1 ? '1 arrival' : '$n arrivals';
   static const noArrivals = 'No one joined on this day.';
-  static const waitMedian = 'median wait';
-  static const waitP90 = '9 in 10 waited less than this';
+  static const waitMedian = 'median wait to be called';
+  static const waitP90 = '9 in 10 were called sooner than this';
   static const serviceMedian = 'median visit';
   static const serviceP90 = '9 in 10 visits were shorter';
   static const joined = 'joined';

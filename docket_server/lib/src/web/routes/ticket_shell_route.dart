@@ -24,6 +24,7 @@ class TicketShellRoute extends Route {
   @override
   Future<Result> handleCall(Session session, Request request) async {
     var html = await indexFile.readAsString();
+    var status = 200;
     try {
       final ticket = await TicketEndpoint.resolve(
         session,
@@ -41,8 +42,12 @@ class TicketShellRoute extends Route {
           );
     } on DocketException {
       // The app shell still loads, and the ticket page explains the link.
+      // 410 rather than 404, since FlutterRoute's fallback answers any 404
+      // with a 200 app shell.
+      status = 410;
     }
-    return Response.ok(
+    return Response(
+      status,
       headers: Headers.build(
         (h) => h.cacheControl = CacheControlHeader(noStore: true),
       ),

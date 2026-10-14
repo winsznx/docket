@@ -68,3 +68,8 @@ See SPONSOR_FINDINGS F3. `Timers.executing(pod)` reads the server's config. With
 - `/try` shows a returning visitor "Reopen my sandbox desk" as the main button, with the hours left, so a judge doesn't make a fresh empty clinic by mistake.
 - A ticket on a line that no desk is serving says "No desk is calling this line right now." The old copy said the clinic's connection was down, which wasn't true when the desk was serving a different line.
 - The sandbox desk links to the owner view, where posters, reports and the audit log live.
+- The day report's wait figures count every patient who was called, not only those served. The labels now say "median wait to be called" and "9 in 10 were called sooner than this", so they don't look wrong next to a served count of one.
+- `GET /t/<token>` with an unknown token answers 410 with the app shell, which still explains the link. It was a soft 200. 410 because FlutterRoute's fallback turns any 404 into a 200 app shell.
+- A finished, cancelled, removed or expired ticket offers "Go to the home page".
+- Sandbox clinics are named "Sandbox clinic". The random suffix stays in the slug only, where it keeps the join link unique.
+- Left as is: the client database logs `no such table: serverpod_migrations` from the SQLite worker on a desk's first check. Serverpod's client migration code handles it and the desk works, offline reload included. Creating that table ourselves would risk Serverpod skipping its own setup.
