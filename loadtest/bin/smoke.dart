@@ -47,6 +47,14 @@ Future<void> main(List<String> args) async {
         'min ${times.first} us, median ${times[times.length ~/ 2]} us, '
         'max ${times.last} us',
       );
+    case 'cpu':
+      stdout.writeln('fixed CPU loop on the server: ${await client.smoke.cpu()} ms');
+      final orm = await client.smoke.ormPing(20)
+        ..sort();
+      stdout.writeln(
+        'ORM primary-key read over 20 queries: min ${orm.first} us, '
+        'median ${orm[orm.length ~/ 2]} us, max ${orm.last} us',
+      );
     case 'schedule':
       final run = await client.smoke.schedule(int.parse(args[2]));
       stdout.writeln('scheduled ${run.id} for ${run.scheduledFor.toIso8601String()}');

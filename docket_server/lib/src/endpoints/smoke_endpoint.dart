@@ -70,6 +70,29 @@ class SmokeEndpoint extends Endpoint {
     return times;
   }
 
+  /// A fixed CPU workload, timed in milliseconds, to compare this podlet's
+  /// CPU with a development machine.
+  Future<int> cpu(Session session) async {
+    final sw = Stopwatch()..start();
+    var x = 0;
+    for (var i = 0; i < 20000000; i++) {
+      x = (x * 31 + i) & 0x7fffffff;
+    }
+    final ms = sw.elapsedMilliseconds;
+    return x == -1 ? -1 : ms;
+  }
+
+  /// [count] primary-key reads through the ORM, in microseconds each.
+  Future<List<int>> ormPing(Session session, int count) async {
+    final times = <int>[];
+    for (var i = 0; i < count.clamp(1, 50); i++) {
+      final sw = Stopwatch()..start();
+      await SmokeRun.db.findFirstRow(session);
+      times.add(sw.elapsedMicroseconds);
+    }
+    return times;
+  }
+
   Future<List<SmokeRun>> runs(Session session) => SmokeRun.db.find(
     session,
     orderBy: (t) => t.scheduledFor.desc(),

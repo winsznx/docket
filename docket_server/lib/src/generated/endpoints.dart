@@ -1071,6 +1071,35 @@ class Endpoints extends _is.EndpointDispatch {
                 params['count'],
               ),
         ),
+        'cpu': _is.MethodConnector(
+          name: 'cpu',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['smoke'] as _ivabzmjp.SmokeEndpoint).cpu(session),
+        ),
+        'ormPing': _is.MethodConnector(
+          name: 'ormPing',
+          params: {
+            'count': _is.ParameterDescription(
+              name: 'count',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['smoke'] as _ivabzmjp.SmokeEndpoint).ormPing(
+                    session,
+                    params['count'],
+                  ),
+        ),
         'runs': _is.MethodConnector(
           name: 'runs',
           params: {},

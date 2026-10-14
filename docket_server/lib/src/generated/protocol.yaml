@@ -45,6 +45,8 @@ smoke:
   - idle:
   - schedule:
   - dbPing:
+  - cpu:
+  - ormPing:
   - runs:
 staff:
   - myClinics:

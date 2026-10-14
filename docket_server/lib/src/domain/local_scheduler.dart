@@ -29,13 +29,16 @@ class LocalScheduler {
     );
   }
 
+  bool _stopped = false;
+
   void stop() {
+    _stopped = true;
     _fast?.cancel();
     _presence?.cancel();
   }
 
   Future<void> _tick() async {
-    if (_busy) return;
+    if (_busy || _stopped) return;
     _busy = true;
     try {
       await _run(
@@ -60,6 +63,7 @@ class LocalScheduler {
   }
 
   Future<void> _run(Future<void> Function(Session) job) async {
+    if (_stopped) return;
     final session = await pod.createSession(enableLogging: false);
     try {
       await job(session);

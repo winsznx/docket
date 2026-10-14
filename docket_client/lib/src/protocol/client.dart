@@ -703,6 +703,22 @@ class EndpointSmoke extends _isc.EndpointRef {
         {'count': count},
       );
 
+  /// A fixed CPU workload, timed in milliseconds, to compare this podlet's
+  /// CPU with a development machine.
+  _ida.Future<int> cpu() => caller.callServerEndpoint<int>(
+    'smoke',
+    'cpu',
+    {},
+  );
+
+  /// [count] primary-key reads through the ORM, in microseconds each.
+  _ida.Future<List<int>> ormPing(int count) =>
+      caller.callServerEndpoint<List<int>>(
+        'smoke',
+        'ormPing',
+        {'count': count},
+      );
+
   _ida.Future<List<_ifwjb9hw.SmokeRun>> runs() =>
       caller.callServerEndpoint<List<_ifwjb9hw.SmokeRun>>(
         'smoke',

@@ -62,3 +62,19 @@ Everything that surprised us while building Docket on Serverpod 4 and Serverpod 
 - Impact: small, but PRD 8.3 had both and had to change.
 - Suggested fix: list reserved field names and the `serverOnly` nullability rule on the model reference page.
 - Upstream: not filed.
+
+### F7. On Serverpod Cloud's small compute, Docket's server work runs about 20 times slower than on a laptop
+- Versions: Serverpod 4.0.4, Serverpod Cloud Starter, compute "small, 256 MB, 1 podlet", region Europe, client in Lagos.
+- Reproduction: `loadtest/tool/timing.dart` and `loadtest/bin/smoke.dart dbping` against the deployed API.
+- Expected and actual: a raw `SELECT 1` from the podlet takes a median 6.3 ms over 20 runs, and a call with no database work takes 176 ms from Lagos, which is network. Call next takes 1.1 to 1.4 s on Cloud against 28 to 64 ms on an M1 Pro, and the Cloud session log puts 0.83 s of it inside the server for 13 queries. A fixed CPU loop is timed on both to compare (see SPONSOR_BEHAVIOUR).
+- Impact: the tap-to-phone time on Cloud is several times the local number, so the README quotes Cloud numbers separately.
+- Suggested fix: show the compute's CPU share next to its memory in `scloud project show`, so a team can tell a slow query from a slow podlet.
+- Upstream: not filed.
+
+### F8. In development the web server can lose its templates under concurrent requests
+- Versions: Serverpod 4.0.4, `serverpod start` in watch mode.
+- Reproduction: run a parallel Playwright sweep against the site while any file under `web/` changes. A few requests answer 500 with `Bad state: Template how_it_works.html missing for TemplateWidget`.
+- Expected and actual: `WebServer._reloadTemplatesIfNeeded` calls `templates.clear()` and then awaits `templates.loadAll(...)`, so any request that arrives during the load sees an empty map. Production never reloads, so it's development only.
+- Impact: flaky local test runs that look like a site bug. Cost us one rerun and a log dive.
+- Suggested fix: load into a fresh `Templates` and swap it in when complete, or guard the reload with a lock that requests wait on.
+- Upstream: not filed.

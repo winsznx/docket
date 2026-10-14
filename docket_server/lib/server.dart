@@ -76,7 +76,11 @@ void run(List<String> args) async {
   _timerMode = Timers.mode(pod);
 
   if (!Timers.executing(pod)) {
-    LocalScheduler(pod).start();
+    final scheduler = LocalScheduler(pod)..start();
+    pod.experimental.shutdownTasks.addTask(
+      'docket-local-scheduler',
+      () async => scheduler.stop(),
+    );
     return;
   }
 

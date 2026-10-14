@@ -1,0 +1,9 @@
+# Idle socket survival on Serverpod Cloud, 2026-10-14 18:39 UTC, loadtest/bin/smoke.dart idle 600, three streams opened together from Lagos, default websocketPingInterval 30 s
+## run 1
+idle tick 2 after 601 s
+idle stream survived 600 s
+## run 2
+idle tick 2 after 601 s
+idle stream survived 600 s
+## run 3
+idle stream dropped after 562 s: Method stream WebSocket connection closed
