@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "serverpod": {
+      "command": "serverpod",
+      "args": ["mcp-server", "--server-dir", "docket_server"]
+    },
+    "dart": {
+      "command": "dart",
+      "args": ["mcp-server"]
+    }
+  }
+}

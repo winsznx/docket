@@ -1,0 +1,40 @@
+# Files and directories created by pub
+.dart_tool/
+.packages
+build/
+
+# Pubspec overrides
+pubspec_overrides.yaml
+
+# Private build material and agent memory, never published
+internal/
+/CLAUDE.md
+.envpath
+.env*
+
+# Secrets
+docket_server/config/passwords.yaml
+
+# Build output and test artifacts
+docket_server/web/app/
+e2e/screens/
+e2e/videos/
+e2e/test-results/
+e2e/playwright-report/
+node_modules/
+
+# Agents. The Serverpod skills and the MCP config hold no secrets or machine
+# paths, so they're committed. Local agent settings are not.
+.dart_skills/
+.agents/
+.claude/*
+!.claude/skills/
+.gemini/
+.cursor/
+.codex/
+.vscode/settings.json
+
+# Serverpod Cloud CLI
+.scloud/
+
+.DS_Store
