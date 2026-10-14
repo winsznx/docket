@@ -97,6 +97,11 @@ class _SandboxPanelState extends State<SandboxPanel> {
               onPressed: () =>
                   web.window.open(widget.sandbox.boardUrl, '_blank'),
             ),
+            TonalPill(
+              label: DeskStrings.openOwner,
+              icon: LucideIcons.settings,
+              onPressed: () => web.window.open('/owner', '_blank'),
+            ),
           ],
         ),
         if (_error != null) ...[

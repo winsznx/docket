@@ -86,36 +86,46 @@ class _TryScreenState extends State<TryScreen> {
                         Semantics(
                           container: true,
                           header: true,
-                          child: Text(DeskStrings.tryBody, style: statement),
+                          child: Text(DeskStrings.tryTitle, style: statement),
+                        ),
+                        const SizedBox(height: DocketSpace.s16),
+                        Text(
+                          DeskStrings.tryBody,
+                          style: theme.textTheme.bodyLarge,
                         ),
                         const SizedBox(height: DocketSpace.s48),
-                        FilledButton(
-                          onPressed: _starting ? null : _start,
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(0, 72),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: DocketSpace.s32,
-                              vertical: DocketSpace.s16,
+                        if (existing != null) ...[
+                          Text(
+                            DeskStrings.tryExisting(
+                              existing.expiresAt
+                                  .difference(DateTime.now().toUtc())
+                                  .inHours,
                             ),
-                            textStyle: theme.textTheme.titleLarge?.copyWith(
-                              fontSize: 22,
-                            ),
+                            style: theme.textTheme.bodyLarge,
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(LucideIcons.play, size: 24),
-                              const SizedBox(width: DocketSpace.s12),
-                              Flexible(
-                                child: Text(
-                                  _starting
-                                      ? DeskStrings.tryStarting
-                                      : DeskStrings.tryStart,
-                                ),
-                              ),
-                            ],
+                          const SizedBox(height: DocketSpace.s16),
+                          _PrimaryButton(
+                            icon: LucideIcons.play,
+                            label: DeskStrings.tryReopen,
+                            onPressed: _starting
+                                ? null
+                                : () => context.go('/desk'),
                           ),
-                        ),
+                          const SizedBox(height: DocketSpace.s16),
+                          TonalPill(
+                            label: _starting
+                                ? DeskStrings.tryStarting
+                                : DeskStrings.tryStartFresh,
+                            onPressed: _starting ? null : _start,
+                          ),
+                        ] else
+                          _PrimaryButton(
+                            icon: LucideIcons.play,
+                            label: _starting
+                                ? DeskStrings.tryStarting
+                                : DeskStrings.tryStart,
+                            onPressed: _starting ? null : _start,
+                          ),
                         if (_error case final error?) ...[
                           const SizedBox(height: DocketSpace.s24),
                           Semantics(
@@ -127,24 +137,6 @@ class _TryScreenState extends State<TryScreen> {
                             ),
                           ),
                         ],
-                        if (existing != null) ...[
-                          const SizedBox(height: DocketSpace.s48),
-                          Text(
-                            DeskStrings.tryExisting(
-                              TimeOfDay.fromDateTime(
-                                existing.expiresAt.toLocal(),
-                              ).format(context),
-                            ),
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                          const SizedBox(height: DocketSpace.s8),
-                          TonalPill(
-                            label: DeskStrings.tryReopen,
-                            onPressed: _starting
-                                ? null
-                                : () => context.go('/desk'),
-                          ),
-                        ],
                       ],
                     ),
                   ),
@@ -153,6 +145,43 @@ class _TryScreenState extends State<TryScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _PrimaryButton extends StatelessWidget {
+  const _PrimaryButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(0, 72),
+        padding: const EdgeInsets.symmetric(
+          horizontal: DocketSpace.s32,
+          vertical: DocketSpace.s16,
+        ),
+        textStyle: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(fontSize: 22),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 24),
+          const SizedBox(width: DocketSpace.s12),
+          Flexible(child: Text(label)),
+        ],
       ),
     );
   }

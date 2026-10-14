@@ -58,3 +58,13 @@ See SPONSOR_FINDINGS F3. `Timers.executing(pod)` reads the server's config. With
 - An owner can't turn texts on unless Twilio credentials are set on the server, so the join page never offers texts that would only be recorded as skipped.
 - `GET /t/<token>` writes the label and place into the app shell. First paint on Fast 3G went from a 1732 ms median to 889 ms.
 - Left open on purpose, with the reason: the board label's font size is 18 to 20% of the screen height but its glyphs measure about 14%, and the patient ticket sits under a header instead of filling the top of the screen. Both are layout changes too risky to make in the last hour before submission.
+
+## Fixes from the last QA pass and the Serverpod docs review
+
+- Caches use `TtlCache`, a small single-flight cache, instead of `session.caches.local`. With the local cache, 300 streams that wake on one `LineChanged` all miss at once and each build the same snapshot. `TtlCache` makes them wait on one build.
+- The in-process sweep catches every error, Dart `Error`s included, and logs it with its stack trace through a logging session. Its timers run outside any guarded zone, so an uncaught error would stop the only podlet on Starter.
+- The overdue-timers readiness indicator passes with a note if its count query fails, and gives up after 2 seconds, so a slow database can't take the pod out of rotation through a check that is only informational.
+- Session log cleanup is on in Cloud through `SERVERPOD_SESSION_LOG_CLEANUP_INTERVAL`, `SERVERPOD_SESSION_LOG_RETENTION_PERIOD` and `SERVERPOD_SESSION_LOG_RETENTION_COUNT`, since Cloud projects don't clean up session logs by default.
+- `/try` shows a returning visitor "Reopen my sandbox desk" as the main button, with the hours left, so a judge doesn't make a fresh empty clinic by mistake.
+- A ticket on a line that no desk is serving says "No desk is calling this line right now." The old copy said the clinic's connection was down, which wasn't true when the desk was serving a different line.
+- The sandbox desk links to the owner view, where posters, reports and the audit log live.

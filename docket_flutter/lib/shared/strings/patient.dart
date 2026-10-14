@@ -139,7 +139,7 @@ abstract final class PatientStrings {
   // Connection, PRD 5.5.
   static String reconnecting(String time) => 'Reconnecting, last update $time';
   static const deskOffline =
-      "The clinic's connection is down. Your place is safe.";
+      'No desk is calling this line right now. Your place is safe.';
 
   // Actions.
   static const confirm = "I'm coming";

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:serverpod/serverpod.dart';
 
@@ -19,7 +20,7 @@ class LocalScheduler {
   String? _lastNightly;
 
   void start() {
-    pod.logVerbose(
+    stdout.writeln(
       '[timer] future calls are off, running the in-process sweep',
     );
     _fast = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
@@ -62,15 +63,28 @@ class LocalScheduler {
     }
   }
 
+  /// Catches every error, [Error]s included: these timers run outside any
+  /// guarded zone, and on a one-podlet plan a crash here takes the clinic
+  /// down. Sessions keep logging on so a failed sweep reaches Insights.
   Future<void> _run(Future<void> Function(Session) job) async {
     if (_stopped) return;
-    final session = await pod.createSession(enableLogging: false);
+    Session? session;
     try {
+      session = await pod.createSession();
       await job(session);
-    } on Exception catch (e) {
-      session.log('[timer] in-process sweep failed: $e', level: LogLevel.error);
+    } on Object catch (e, stackTrace) {
+      if (session != null) {
+        session.log(
+          '[timer] in-process sweep failed',
+          level: LogLevel.error,
+          exception: e,
+          stackTrace: stackTrace,
+        );
+      } else {
+        stderr.writeln('[timer] in-process sweep could not open a session: $e');
+      }
     } finally {
-      await session.close();
+      await session?.close();
     }
   }
 }

@@ -30,9 +30,10 @@ import 'views.dart';
 abstract final class QueueService {
   static const int maxJoinsPerClinicDay = 2000;
 
-  // Serverpod Cloud measured about 50 ms per database round trip from the
-  // podlet (docs/SPONSOR_FINDINGS.md F7), so the hot path caches what
-  // rarely changes. Each cache lives on this podlet only.
+  // On Serverpod Cloud's small compute each query costs about 60 ms of
+  // server CPU (13 queries took 0.83 s, docs/SPONSOR_FINDINGS.md F7), so
+  // the hot path caches what rarely changes. Each cache lives on this
+  // podlet only.
   static final _medians = TtlCache<UuidValue, int>(const Duration(seconds: 30));
   static final _openDays = TtlCache<String, bool>(const Duration(seconds: 30));
   static const int maxSandboxTickets = 200;

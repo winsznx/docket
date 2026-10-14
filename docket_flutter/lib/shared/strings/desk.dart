@@ -5,11 +5,15 @@ abstract final class DeskStrings {
   // `/try`
   static const tryTitle = 'Try a live clinic';
   static const tryBody =
-      "This makes a throwaway clinic for you. It's deleted after 24 hours.";
+      "You run the front desk of a throwaway clinic. Join the line from your "
+      "phone, then press Call next and watch it move. It's deleted after 24 "
+      'hours.';
   static const tryStart = 'Open my sandbox desk';
+  static const tryStartFresh = 'Start a new sandbox instead';
   static const tryStarting = 'Making your clinic';
-  static String tryExisting(String time) =>
-      'You already have a sandbox. It stays until $time.';
+  static String tryExisting(int hoursLeft) => hoursLeft < 2
+      ? "You already have a sandbox. It's deleted within the hour."
+      : 'You already have a sandbox. It stays for $hoursLeft more hours.';
   static const tryReopen = 'Reopen my sandbox desk';
   static const tryLoading = 'Making your sandbox clinic';
 
@@ -242,6 +246,7 @@ abstract final class DeskStrings {
   static const addDemo = 'Add 5 demo walk-ins';
   static const addingDemo = 'Adding demo patients';
   static const openBoard = 'Open the waiting-room board in a new tab';
+  static const openOwner = 'Open the owner view in a new tab';
   static const needsConnection = 'Needs a connection';
   static const joinQrSemantics = 'QR code to join this clinic';
   static const ticketQrSemantics = "QR code for the patient's ticket";

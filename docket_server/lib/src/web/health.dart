@@ -14,6 +14,9 @@ class OverdueTimersIndicator extends HealthIndicator<int> {
   String get observedUnit => 'calls';
 
   @override
+  Duration get timeout => const Duration(seconds: 2);
+
+  @override
   Future<HealthCheckResult> check() async {
     final session = await Serverpod.instance.createSession(
       enableLogging: false,
@@ -28,6 +31,8 @@ class OverdueTimersIndicator extends HealthIndicator<int> {
         observedValue: count,
         output: count == 0 ? null : '$count timers are overdue.',
       );
+    } on Exception catch (e) {
+      return pass(output: "Couldn't count overdue timers: $e");
     } finally {
       await session.close();
     }
