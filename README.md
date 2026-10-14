@@ -20,7 +20,7 @@ A re-slot landing after a server restart isn't recorded as a GIF. It's measured 
 
 1. Open <https://docket.serverpod.space/try> and tap Open my sandbox desk. Target: about 5 s.
 2. Scan the join QR beside the desk with your phone and join the line. Target: about 10 s.
-3. Tap Call next on the desk. The phone changes. Measured from Lagos against Serverpod Cloud's small compute: 2.7 s and 4.7 s from the click to the phone's text in two Playwright runs. The same path takes 1.09 s against a local server in one run. Why, and what fixes it: [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
+3. Tap Call next on the desk. The phone changes. Measured from Lagos against Serverpod Cloud's small compute: 2.7, 3.4 and 4.7 s from the click to the phone's text in three Playwright runs. The same path takes 1.09 s against a local server in one run. Why, and what fixes it: [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
 
 - Live app: <https://docket.serverpod.space/try>
 - Site: <https://docket.serverpod.space/>
