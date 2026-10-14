@@ -32,6 +32,15 @@ class TicketEndpoint extends Endpoint {
     await for (final _ in events.transform(
       const Coalesce<Object?>(Duration(milliseconds: 100)),
     )) {
+      // The desk can rotate the link with linkPhone. An open stream on the
+      // old link stops there instead of following the ticket.
+      final current = await Ticket.db.findById(session, ticket.id!);
+      if (current == null || current.tokenHash != Tokens.hash(token)) {
+        throw DocketException(
+          code: DocketErrorCode.ticketNotFound,
+          message: Copy.ticketNotFound,
+        );
+      }
       yield await Views.patient(session, ticket.id!);
     }
   }

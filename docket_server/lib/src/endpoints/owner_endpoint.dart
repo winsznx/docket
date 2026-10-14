@@ -189,6 +189,10 @@ class OwnerEndpoint extends Endpoint {
       !(settings.smsEnabled && auth.clinic.isSandbox),
       "Sandboxes don't send texts.",
     );
+    _check(
+      !settings.smsEnabled || AppConfig.twilioConfigured(session),
+      "Texts need Twilio set up on the server first.",
+    );
     final updated = await Clinic.db.updateRow(
       session,
       auth.clinic.copyWith(

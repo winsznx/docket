@@ -1,0 +1,23 @@
+# Server work on Serverpod Cloud's small compute against a local M1 Pro, 2026-10-14
+# Serverpod 4.0.4, Serverpod Cloud Starter, compute small, 256 MB, 1 podlet, region Europe, client in Lagos
+# Tools: loadtest/bin/smoke.dart (cpu, dbping) and loadtest/tool/timing.dart against the deployed API
+
+## smoke.cpu, a fixed loop of 20 million integer steps
+Serverpod Cloud podlet  805 ms
+local M1 Pro            38 ms
+ratio                   about 21 times slower
+
+## Database from the podlet, 20 runs each
+ORM primary-key read    median 4.8 ms
+raw SELECT 1            median 6.3 ms
+
+## Call next round trip from Lagos, desk.act(CallNextAction)
+after the round-trip cuts   1109 ms
+after the round-trip cuts   1360 ms
+after the round-trip cuts   1232 ms
+before the round-trip cuts  1423 ms
+before the round-trip cuts  1380 ms
+before the round-trip cuts  1313 ms
+
+## A call with no database work, round trip from Lagos
+no-database call        176 ms

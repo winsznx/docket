@@ -7,7 +7,20 @@ import '../generated/protocol.dart';
 /// Component 1 Cloud check: a stream that ticks once a second and a future
 /// call scheduled a minute out whose firing time is stored.
 class SmokeEndpoint extends Endpoint {
+  /// These probes burn CPU and hold sockets on purpose, so they answer only
+  /// outside production. The Cloud measurements in docs/measurements were
+  /// taken with them before they were closed.
+  static void _devOnly(Session session) {
+    if (session.serverpod.runMode == 'production') {
+      throw DocketException(
+        code: DocketErrorCode.validation,
+        message: 'This diagnostic is off on the live app.',
+      );
+    }
+  }
+
   Stream<SmokeTick> ticks(Session session, int count) async* {
+    _devOnly(session);
     final n = count.clamp(1, 120);
     for (var i = 1; i <= n; i++) {
       yield SmokeTick(
@@ -23,6 +36,7 @@ class SmokeEndpoint extends Endpoint {
   /// measure how long an idle stream survives Cloud's load balancer
   /// (PRD 23).
   Stream<SmokeTick> idle(Session session, int seconds) async* {
+    _devOnly(session);
     yield SmokeTick(
       n: 1,
       serverTime: DateTime.now().toUtc(),
@@ -37,6 +51,7 @@ class SmokeEndpoint extends Endpoint {
   }
 
   Future<SmokeRun> schedule(Session session, int delaySeconds) async {
+    _devOnly(session);
     final due = DateTime.now().toUtc().add(
       Duration(seconds: delaySeconds.clamp(5, 900)),
     );
@@ -61,6 +76,7 @@ class SmokeEndpoint extends Endpoint {
   /// Times [count] trivial round trips to the database from this podlet,
   /// in microseconds each, to separate database latency from network.
   Future<List<int>> dbPing(Session session, int count) async {
+    _devOnly(session);
     final times = <int>[];
     for (var i = 0; i < count.clamp(1, 50); i++) {
       final sw = Stopwatch()..start();
@@ -73,6 +89,7 @@ class SmokeEndpoint extends Endpoint {
   /// A fixed CPU workload, timed in milliseconds, to compare this podlet's
   /// CPU with a development machine.
   Future<int> cpu(Session session) async {
+    _devOnly(session);
     final sw = Stopwatch()..start();
     var x = 0;
     for (var i = 0; i < 20000000; i++) {
@@ -84,6 +101,7 @@ class SmokeEndpoint extends Endpoint {
 
   /// [count] primary-key reads through the ORM, in microseconds each.
   Future<List<int>> ormPing(Session session, int count) async {
+    _devOnly(session);
     final times = <int>[];
     for (var i = 0; i < count.clamp(1, 50); i++) {
       final sw = Stopwatch()..start();
@@ -93,9 +111,12 @@ class SmokeEndpoint extends Endpoint {
     return times;
   }
 
-  Future<List<SmokeRun>> runs(Session session) => SmokeRun.db.find(
-    session,
-    orderBy: (t) => t.scheduledFor.desc(),
-    limit: 20,
-  );
+  Future<List<SmokeRun>> runs(Session session) {
+    _devOnly(session);
+    return SmokeRun.db.find(
+      session,
+      orderBy: (t) => t.scheduledFor.desc(),
+      limit: 20,
+    );
+  }
 }

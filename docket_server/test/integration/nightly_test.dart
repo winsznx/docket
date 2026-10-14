@@ -35,13 +35,31 @@ void main() {
           session,
           where: (t) => t.clinicId.equals(kept.clinicId),
         );
+        // Move the visit to yesterday, so the purge treats it as a past day.
+        final yesterday = DateTime.now()
+            .toUtc()
+            .subtract(const Duration(days: 1))
+            .toIso8601String()
+            .substring(0, 10);
         await ServiceDay.db.updateRow(
           session,
           day!.copyWith(
+            serviceDate: yesterday,
             closedAt: DateTime.now().toUtc().subtract(
               const Duration(hours: 25),
             ),
           ),
+        );
+        await Ticket.db.updateWhere(
+          session,
+          where: (t) => t.clinicId.equals(kept.clinicId),
+          columnValues: (t) => [t.serviceDate(yesterday)],
+        );
+        final today = await kept.join(builder, endpoints, name: 'Today');
+        await endpoints.desk.act(
+          builder,
+          Desk().closeDay(kept.clinicId),
+          kept.token,
         );
         final sandbox = (await Clinic.db.findById(session, gone.clinicId))!;
         await Clinic.db.updateRow(
@@ -57,6 +75,8 @@ void main() {
 
         final ticket = await Ticket.db.findById(session, joined.view.ticketId);
         expect(ticket!.displayName, 'Patient');
+        final todays = await Ticket.db.findById(session, today.view.ticketId);
+        expect(todays!.displayName, 'Today');
         expect(
           await PushTarget.db.count(
             session,
@@ -72,13 +92,15 @@ void main() {
         );
         expect(report, isNotNull);
         expect(report!.data.lines.first.joined, 1);
+        // Yesterday and today are both closed, so there are two reports, and
+        // a second run adds none.
         await ClinicJobs.nightly(session);
         expect(
           await DayReport.db.count(
             session,
             where: (t) => t.clinicId.equals(kept.clinicId),
           ),
-          1,
+          2,
         );
       });
     },

@@ -166,7 +166,7 @@ Confirm, start service, a miss, leave, remove and close day cancel the open wind
 
 The recurring calls register after `pod.start()`, since scheduling before start throws, and each is cancelled by identifier first so a restart never stacks duplicates. The config for every run mode sets `futureCallExecutionEnabled: true` with `scanInterval: 1000`, `concurrencyLimit: 8`, `checkBrokenCalls: true` and `deleteBrokenCalls: true`. Deleting broken calls is safe because `timerSweep` covers any window whose call was dropped.
 
-The nightly job in `ClinicJobs.nightly` stores a `DayReport` for each closed day that lacks one. It deletes `SmsTarget` and `PushTarget` rows and renames tickets to "Patient" for service days that closed more than 24 hours ago. It deletes expired sandbox clinics with everything they own. It deletes `RateBucket` rows older than two days, and it clears `reason` and `actorRef` on events older than 30 days.
+The nightly job in `ClinicJobs.nightly` stores a `DayReport` for each closed day that lacks one. It deletes `SmsTarget` and `PushTarget` rows and renames tickets to "Patient" for every closed service day before the clinic's today, so a visit's contact data goes at the first nightly run after its day. It deletes expired sandbox clinics with everything they own. It deletes `RateBucket` rows older than two days, and it clears `reason` and `actorRef` on events older than 30 days.
 
 ### Servers without future calls
 

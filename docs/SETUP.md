@@ -98,7 +98,7 @@ If you change `database` after the first start, the embedded Postgres keeps the 
 serverpod run flutter_build
 ```
 
-This runs the `flutter_build` script from `docket_server/pubspec.yaml`, which builds `docket_flutter` with `flutter build web --release --base-href / --no-web-resources-cdn` into `docket_server/web/app`. Build it before you start the server. `lib/server.dart` mounts the app with `FlutterRoute` only when `web/app` exists at startup, so after a first build on a running server, restart it.
+This runs the `flutter_build` script from `docket_server/pubspec.yaml`, which builds `docket_flutter` with `flutter build web --release --base-href / --pwa-strategy=none --no-web-resources-cdn` into `docket_server/web/app`. Build it before you start the server. `lib/server.dart` mounts the app with `FlutterRoute` only when `web/app` exists at startup, so after a first build on a running server, restart it.
 
 ## 5. Run the server
 
@@ -145,6 +145,21 @@ BASE_URL=http://localhost:8082 npm test
 
 `npm test` runs `playwright test --project=chromium --project=webkit` against `BASE_URL`, which defaults to `http://localhost:18082`. Plain `npx playwright test` also runs the `tools` project, which renders the social image and captures site screenshots into files instead of checking anything.
 
+### End-to-end suites
+
+Each Playwright config in `e2e/` runs one suite. Run them from `e2e/`. For a local run, build the app with `serverpod run flutter_build`, start the server from `docket_server`, and point every base URL at the web server on <http://localhost:8082> and every API URL at <http://localhost:8080>. The suites with a live default check https://docket.serverpod.space unless you override them.
+
+| Config | What it runs | Command | Env vars and defaults |
+| --- | --- | --- | --- |
+| `playwright.config.ts` | `site.spec.ts` in Chromium and WebKit, plus the `tools` project | `BASE_URL=http://localhost:8082 npm test` | `BASE_URL`, default `http://localhost:18082` |
+| `live.config.ts` | `live-smoke.spec.ts`: the home page, `/try` through to a called phone, and `/livez`. It appends the desk click to phone text time to `e2e/screens/live/latency.log` | `npx playwright test -c live.config.ts` | `LIVE_BASE_URL`, default `https://docket.serverpod.space`. `LIVE_API_URL`, default `https://docket.api.serverpod.space` |
+| `desk.config.ts` | `desk.spec.ts` and `offline.spec.ts` | `DESK_BASE_URL=http://localhost:8082 npx playwright test -c desk.config.ts` | `DESK_BASE_URL`, default `http://localhost:9102`. `DOCKET_API_URL`, default `http://localhost:8080`. `DESK_OUTPUT_DIR` for artifacts, default a folder under the system temp directory |
+| `patient.config.ts` | `patient.spec.ts` | `BASE_URL=http://localhost:8082 npx playwright test -c patient.config.ts` | `BASE_URL`, default `http://localhost:9101`. `API_URL`, default `http://localhost:8080` |
+| `board-owner.config.ts` | `board.spec.ts` and `owner.spec.ts` | `BOARD_OWNER_BASE_URL=http://localhost:8082 DOCKET_SERVER_LOG=<server log file> npx playwright test -c board-owner.config.ts` | `BOARD_OWNER_BASE_URL`, default `http://localhost:9103`. `DOCKET_API_URL`, default `http://localhost:8080`. `DOCKET_SERVER_LOG`, the server's log file, where the owner spec reads sign-up codes |
+| `app.config.ts` | `app-sweep.spec.ts`, every Flutter route in Chromium and WebKit | `npx playwright test -c app.config.ts` | `APP_BASE_URL`, default `http://localhost:8082`. `APP_API_URL`, default `http://localhost:8080` |
+| `measure.config.ts` | `measure-first-paint.spec.ts` and `measure-reconnect.spec.ts`. They append to `docs/measurements/first-paint.tsv` and `reconnect.tsv` | `npx playwright test -c measure.config.ts` | `MEASURE_BASE_URL`, default `https://docket.serverpod.space`. `MEASURE_API_URL`, default `https://docket.api.serverpod.space` |
+| `capture.config.ts` | `capture.spec.ts`, which records the desk and the phone for the film and the README GIFs into `e2e/videos/` | `npx playwright test -c capture.config.ts` | `CAPTURE_BASE_URL`, default `https://docket.serverpod.space` |
+
 From the repo root, `dart run tool/gen_tokens.dart --check` fails when the generated design token files have drifted from `design/tokens.json`.
 
 The load and restart scripts take the API URL:
@@ -176,7 +191,7 @@ serverpod cloud deploy
 - `project link` points `scloud.yaml` at your project.
 - `push-cloud` sets `vapidPublicKey`, `vapidPrivateKey`, `vapidSubject` and `phoneEncryptionKey` from the `shared:` block as Cloud passwords, plus the three Twilio keys when they're present, without printing them. Generate the keys with your own URL as the subject first, as in step 3. The database password, the service secret and the auth module's keys are managed by Cloud, and `serverpod cloud password list` shows them.
 - `PUBLIC_BASE_URL` is the base for links in texts, pushes, posters and QR codes, and the Twilio status callback.
-- `scloud.yaml` has no pre-deploy hooks, so build the web app yourself before each deploy. Run `serverpod generate` too if you changed models or endpoints.
+- `scloud.yaml` runs `serverpod generate` and `serverpod run flutter_build` as pre-deploy hooks, so each deploy regenerates the code and rebuilds the web app before it uploads.
 - `--wet-run --show-files` lists what would be uploaded without deploying. Check that `docket_server/web/app` is in the list, since it's gitignored.
 
 Migrations apply on deploy. Follow the rollout with `serverpod cloud status deployment show` and read logs with `serverpod cloud log`. A server that crash-loops on start keeps the rollout running without showing why, and the reason is only in the logs.

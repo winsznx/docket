@@ -247,16 +247,24 @@ abstract final class ClinicJobs {
     session.log('[timer] nightly upkeep finished');
   }
 
-  /// Names become "Patient" and phone and push targets are deleted for
-  /// service days that closed more than 24 hours ago (PRD 11, 18).
+  /// Names become "Patient" and phone and push targets are deleted for every
+  /// closed service day before the clinic's today, so the first nightly run
+  /// after a visit clears it: "deleted the day after your visit" (PRD 17.1,
+  /// 18).
   static Future<void> purgeContactData(Session session, DateTime now) async {
     final days = await ServiceDay.db.find(
       session,
-      where: (t) =>
-          t.state.equals(DayState.closed) &
-          (t.closedAt < now.subtract(const Duration(hours: 24))),
+      where: (t) => t.state.equals(DayState.closed),
     );
+    final clinics = <UuidValue, Clinic?>{};
     for (final day in days) {
+      final clinic = clinics[day.clinicId] ??= await Clinic.db.findById(
+        session,
+        day.clinicId,
+      );
+      if (clinic == null) continue;
+      final today = ClinicTime.serviceDate(clinic.timezone, now);
+      if (day.serviceDate.compareTo(today) >= 0) continue;
       final tickets = await Ticket.db.find(
         session,
         where: (t) =>

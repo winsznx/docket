@@ -49,3 +49,12 @@ See SPONSOR_FINDINGS F3. `Timers.executing(pod)` reads the server's config. With
 ## Settings Cloud doesn't read from YAML
 
 `.scloudignore` leaves out `config/production.yaml`, because Cloud manages that file. The future-call settings from PRD 11 are set as Cloud variables instead: `SERVERPOD_FUTURE_CALL_SCAN_INTERVAL=1000`, `SERVERPOD_FUTURE_CALL_CONCURRENCY_LIMIT=8`, `SERVERPOD_FUTURE_CALL_CHECK_BROKEN_CALLS=true`, `SERVERPOD_FUTURE_CALL_DELETE_BROKEN_CALLS=true`.
+
+## Fixes from the cold audit
+
+- The smoke endpoint's probes (CPU loop, idle stream, scheduling, database pings) answer only outside production and are rate limited to 10 a minute per address. They burned CPU and held sockets on purpose, which the single Starter podlet can't afford. The Cloud numbers they produced are stored in `docs/measurements/`.
+- Contact data is purged for every closed service day before the clinic's today, so the first nightly run after a visit clears it. PRD 11 said "more than 24 hours" after closing, which kept data two nights and broke the "deleted the day after your visit" copy. The copy wins.
+- A patient stream re-checks its token on every rebuild, so a link the desk replaced with `linkPhone` stops getting updates.
+- An owner can't turn texts on unless Twilio credentials are set on the server, so the join page never offers texts that would only be recorded as skipped.
+- `GET /t/<token>` writes the label and place into the app shell. First paint on Fast 3G went from a 1732 ms median to 889 ms.
+- Left open on purpose, with the reason: the board label's font size is 18 to 20% of the screen height but its glyphs measure about 14%, and the patient ticket sits under a header instead of filling the top of the screen. Both are layout changes too risky to make in the last hour before submission.

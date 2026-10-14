@@ -16,6 +16,7 @@ Middleware rateLimitMiddleware() {
     'owner': 240,
     'desk': 600,
     'board': 120,
+    'smoke': 10,
   };
   final counters = <String, ({DateTime start, int count})>{};
   var lastSweep = DateTime.now();

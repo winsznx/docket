@@ -20,7 +20,7 @@ A re-slot landing after a server restart isn't recorded as a GIF. It's measured 
 
 1. Open <https://docket.serverpod.space/try> and tap Open my sandbox desk. Target: about 5 s.
 2. Scan the join QR beside the desk with your phone and join the line. Target: about 10 s.
-3. Tap Call next on the desk. The phone changes. Measured from Lagos against Serverpod Cloud's small compute: 2.7 s from the click to the phone's text in one Playwright run. The same path takes about 1 s against a local server. Why, and what fixes it: [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
+3. Tap Call next on the desk. The phone changes. Measured from Lagos against Serverpod Cloud's small compute: 2.7 s and 4.7 s from the click to the phone's text in two Playwright runs. The same path takes 1.09 s against a local server in one run. Why, and what fixes it: [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
 
 - Live app: <https://docket.serverpod.space/try>
 - Site: <https://docket.serverpod.space/>
@@ -96,18 +96,18 @@ Every number Docket publishes comes from a recorded run with its run count. The 
 - 300 patient streams on one line with a call every 2 seconds: p50 180 ms, p95 196 ms, max 209 ms from the desk's action to each phone (4,500 samples, local, server and clients on one M1 Pro).
 - Fifty pairs of Call next fired together from two desks: 40 distinct tickets called, 60 "No one is waiting", zero duplicates (integration test).
 - Idle streams on Serverpod Cloud with the default 30-second ping: 2 of 3 lived a full 600 s, 1 closed at 562 s and reconnects on its own.
-- On Serverpod Cloud's small compute, server work runs about 21 times slower than on the M1 Pro (a fixed CPU loop: 805 ms against 38 ms), so tap-to-phone there is a few seconds. See [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
+- On Serverpod Cloud's small compute, a fixed CPU loop runs about 21 times slower (805 ms against 38 ms) than on the M1 Pro, so tap to phone there took 2.7 s against 1.09 s locally, one run each. See [SPONSOR_FINDINGS F7](docs/SPONSOR_FINDINGS.md).
 
 ## Limits
 
-- A Twilio trial account delivers only to verified numbers. The film and the judge path use verified numbers or push.
+- The live app has no Twilio credentials yet, so it sends no texts. The dispatcher records each one as skipped with "SMS isn't configured on this server." and Web Push still works. Once Twilio is set up, a trial account delivers only to verified numbers.
 - In Nigeria, MTN, Airtel and 9mobile block numeric international senders. An alphanumeric sender ID needs registration through Twilio, which takes two to three weeks. Until one is registered, texts from an international number won't reach those networks.
 - iOS delivers Web Push only to web apps added to the Home Screen, on iOS 16.4 and later. On an iPhone outside the Home Screen, the patient page shows the steps to add Docket and offers SMS beside them when the clinic has it.
 - Serverpod Cloud's Starter plan has future calls off. Docket is built for the Growth plan, where they're on. On a server without future calls, `LocalScheduler` applies the same timer rules from Postgres once a second, and `/readyz` reports which mode is running under `docket:timer-mode`.
 
 ## AI disclosure
 
-Built by Popoola Timothy with Claude Code as the coding agent under his direction, using the Serverpod agent skills and MCP server from `serverpod start`. Every feature runs live on Serverpod Cloud.
+Built by Popoola Timothy with Claude Code as the coding agent under his direction, using the Serverpod agent skills and MCP server from `serverpod start`. Docket runs live on Serverpod Cloud.
 
 ## License
 

@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "measure": "Missed call re-slot after a server restart, local",
+    "value": "median 773 ms, from 401 to 784 ms after the grace end",
+    "runs": 3,
+    "method": "Local server with future calls on. A patient was called with a 60 s grace window, the server was killed about 22 s in and started again, and a client polling every 500 ms timed the re-slot against the grace end.",
+    "measuredOn": "2026-10-14"
+  },
+  {
+    "measure": "Missed call re-slot after a redeploy, Serverpod Cloud",
+    "value": "1148 ms after the grace end",
+    "runs": 1,
+    "method": "Serverpod Cloud Starter plan with the in-process sweep. A redeploy ran inside a 180 s grace window, and a client polling every 500 ms timed the re-slot against the grace end.",
+    "measuredOn": "2026-10-14"
+  },
+  {
+    "measure": "Reconnect, network back to the new place on the phone",
+    "value": "median 986 ms, from 859 to 1430 ms",
+    "runs": 5,
+    "method": "Serverpod Cloud from Lagos. Playwright took the phone offline for 8 s while the desk called, then timed how long the phone took to show its new place.",
+    "measuredOn": "2026-10-14"
+  },
+  {
+    "measure": "Ticket first paint on Fast 3G",
+    "value": "median 889 ms, from 881 to 967 ms",
+    "runs": 5,
+    "method": "Chromium with Chrome DevTools' Fast 3G profile and the cache off, from navigation to the ticket label on screen, against the live app on Serverpod Cloud",
+    "measuredOn": "2026-10-14"
+  },
+  {
+    "measure": "300 patient streams on one line",
+    "value": "p95 196 ms, p50 180 ms, max 209 ms",
+    "runs": 1,
+    "method": "Local, with the server and 300 clients on one M1 Pro. The desk called every 2 s for 15 calls, and each of the 4,500 samples is the time from the desk's action to a phone getting the new line.",
+    "measuredOn": "2026-10-14"
+  },
+  {
+    "measure": "Idle stream survival on Serverpod Cloud",
+    "value": "562 to 600 s",
+    "runs": 3,
+    "method": "Three streams from Lagos sent one value, stayed silent for 600 s with the default 30 s ping, then sent another. Two lived the full 600 s and one closed at 562 s. A stream that closes reconnects on its own.",
+    "measuredOn": "2026-10-14"
+  }
+]
