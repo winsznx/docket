@@ -1615,6 +1615,38 @@ class _SmokeEndpoint {
     return _localTestStreamManager.outputStreamController.stream;
   }
 
+  _ida.Stream<_iianes8g.SmokeTick> idle(
+    _ist.TestSessionBuilder sessionBuilder,
+    int seconds,
+  ) {
+    var _localTestStreamManager = _ist.TestStreamManager<_iianes8g.SmokeTick>();
+    _ist.callStreamFunctionAndHandleExceptions(
+      () async {
+        var _localUniqueSession =
+            (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+              endpoint: 'smoke',
+              method: 'idle',
+            );
+        var _localCallContext = await _endpointDispatch
+            .getMethodStreamCallContext(
+              createSessionCallback: (_) => _localUniqueSession,
+              endpointPath: 'smoke',
+              methodName: 'idle',
+              arguments: {'seconds': seconds},
+              requestedInputStreams: [],
+              serializationManager: _serializationManager,
+            );
+        await _localTestStreamManager.callStreamMethod(
+          _localCallContext,
+          _localUniqueSession,
+          {},
+        );
+      },
+      _localTestStreamManager.outputStreamController,
+    );
+    return _localTestStreamManager.outputStreamController.stream;
+  }
+
   _ida.Future<_ihlom2lm.SmokeRun> schedule(
     _ist.TestSessionBuilder sessionBuilder,
     int delaySeconds,

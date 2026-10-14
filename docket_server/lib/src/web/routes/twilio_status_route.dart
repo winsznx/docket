@@ -16,7 +16,8 @@ class TwilioStatusRoute extends Route {
     final body = await request.readAsString();
     final params = Uri.splitQueryString(body);
     final signature = request.headers['X-Twilio-Signature']?.firstOrNull ?? '';
-    final url = '${AppConfig.publicBaseUrl(session.serverpod)}/api/twilio/status';
+    final url =
+        '${AppConfig.publicBaseUrl(session.serverpod)}/api/twilio/status';
     if (!verifyTwilioSignature(
       authToken: token,
       url: url,
@@ -29,7 +30,12 @@ class TwilioStatusRoute extends Route {
     final sid = params['MessageSid'];
     final status = params['MessageStatus'];
     if (sid != null && status != null) {
-      await Dispatcher.applyTwilioStatus(session, sid, status, params['ErrorCode']);
+      await Dispatcher.applyTwilioStatus(
+        session,
+        sid,
+        status,
+        params['ErrorCode'],
+      );
     }
     return Response.noContent();
   }

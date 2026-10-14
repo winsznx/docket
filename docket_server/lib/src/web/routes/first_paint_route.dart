@@ -55,7 +55,9 @@ class FirstPaintRoute extends Route {
 
   static Response _json(int status, Map<String, Object?> body) => Response(
     status,
-    headers: Headers.build((h) => h.cacheControl = CacheControlHeader(noStore: true)),
+    headers: Headers.build(
+      (h) => h.cacheControl = CacheControlHeader(noStore: true),
+    ),
     body: Body.fromString(jsonEncode(body), mimeType: MimeType.json),
   );
 }

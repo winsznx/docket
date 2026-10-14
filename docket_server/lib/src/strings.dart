@@ -99,7 +99,8 @@ abstract final class Copy {
         TicketState.closed => '$label was closed with the day.',
         TicketState.transferred => '$label was already transferred.',
         TicketState.waiting => '$label is waiting and hasn\'t been called.',
-        TicketState.called => '$label has been called and is waiting to confirm.',
+        TicketState.called =>
+          '$label has been called and is waiting to confirm.',
         TicketState.confirmed => '$label is on the way to the room.',
         TicketState.inService => '$label is already being seen.',
       };

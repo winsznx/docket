@@ -4,6 +4,7 @@ import '../app_config.dart';
 import '../generated/protocol.dart';
 import 'eta.dart';
 import 'line_queue.dart';
+import '../util/ttl_cache.dart';
 
 /// Builds every view a client sees. Patient and board views share one cached
 /// line snapshot per line version, so a hundred phones on one line cost one
@@ -11,12 +12,13 @@ import 'line_queue.dart';
 abstract final class Views {
   static const _cacheLifetime = Duration(seconds: 10);
 
+  static final _snapshots = TtlCache<String, LineView>(_cacheLifetime);
+
   static Future<LineSnapshot> lineSnapshot(Session session, Line line) async {
-    final key = 'line:${line.id}:${line.version}';
-    final cached = await session.caches.local.get<LineView>(key);
-    if (cached != null) return LineSnapshot(line, cached);
-    final view = await _buildLineView(session, line, withDelivery: false);
-    await session.caches.local.put(key, view, lifetime: _cacheLifetime);
+    final view = await _snapshots.get(
+      'line:${line.id}:${line.version}',
+      () => _buildLineView(session, line, withDelivery: false),
+    );
     return LineSnapshot(line, view);
   }
 
@@ -162,12 +164,31 @@ abstract final class Views {
     Clinic clinic,
   ) async => LineQueue.serviceDateNow(clinic);
 
+  static final _clinics = TtlCache<UuidValue, Clinic>(
+    const Duration(seconds: 5),
+  );
+  static final _presence = TtlCache<UuidValue, LinePresence>(
+    const Duration(seconds: 3),
+  );
+  static final _lastMove = TtlCache<String, DateTime?>(
+    const Duration(seconds: 30),
+  );
+
+  static Future<Clinic> clinic(Session session, UuidValue id) =>
+      _clinics.get(id, () async => (await Clinic.db.findById(session, id))!);
+
   /// Rooms that count for the ETA and the patient's desk-offline banner:
   /// open rooms of the line with a desk heartbeat in the last 45 seconds.
-  static Future<({int activeRooms, bool deskOnline})> presence(
-    Session session,
-    Line line,
-  ) async {
+  /// Cached for 3 seconds per line, so a full waiting room costs two
+  /// queries every few seconds instead of two per phone.
+  static Future<LinePresence> presence(Session session, Line line) =>
+      _presence.get(line.id!, () => _loadPresence(session, line));
+
+  /// Drops cached presence when a desk comes or goes, so the next view
+  /// shows it straight away.
+  static void presenceChanged(UuidValue lineId) => _presence.invalidate(lineId);
+
+  static Future<LinePresence> _loadPresence(Session session, Line line) async {
     final rooms = await Room.db.find(
       session,
       where: (t) => t.lineId.equals(line.id!),
@@ -186,12 +207,38 @@ abstract final class Views {
     final active = rooms
         .where((r) => r.state == RoomState.open && presentRooms.contains(r.id))
         .length;
-    return (
+    return LinePresence(
       activeRooms: active < 1 ? 1 : active,
       deskOnline: clinicWide || presentRooms.isNotEmpty,
+      roomNames: {for (final r in rooms) r.id!: r.name},
     );
   }
 
+  /// When the line last moved for its patients, cached per line version.
+  static Future<DateTime?> lineMovedAt(Session session, Line line) =>
+      _lastMove.get('${line.id}:${line.version}', () async {
+        final event = await TicketEvent.db.findFirstRow(
+          session,
+          where: (t) =>
+              t.lineId.equals(line.id!) &
+              t.type.inSet({
+                TicketEventType.called,
+                TicketEventType.cancelled,
+                TicketEventType.removed,
+                TicketEventType.reslotted,
+                TicketEventType.graceExpired,
+                TicketEventType.arrivalExpired,
+                TicketEventType.markedNoShow,
+                TicketEventType.priorityInserted,
+              }),
+          orderBy: (t) => t.at.desc(),
+        );
+        return event?.at;
+      });
+
+  /// One patient's view. On a line change every phone on the line rebuilds,
+  /// so this reads the ticket and the line and takes everything else from
+  /// caches keyed by line version (PRD 12).
   static Future<PatientView> patient(
     Session session,
     UuidValue ticketId,
@@ -203,13 +250,10 @@ abstract final class Views {
         message: 'That ticket no longer exists.',
       );
     }
-    final clinic = (await Clinic.db.findById(session, ticket.clinicId))!;
+    final clinic = await Views.clinic(session, ticket.clinicId);
     final line = (await Line.db.findById(session, ticket.lineId))!;
     final snap = await lineSnapshot(session, line);
     final presence = await Views.presence(session, line);
-    final room = ticket.roomId == null
-        ? null
-        : await Room.db.findById(session, ticket.roomId!);
 
     final waiting = snap.waiting;
     final index = waiting.indexWhere((t) => t.id == ticket.id);
@@ -229,31 +273,33 @@ abstract final class Views {
     final nextAfter = position != null && index > 0
         ? waiting[index - 1].label
         : null;
-    final lastMove = await TicketEvent.db.findFirstRow(
-      session,
-      where: (t) =>
-          t.lineId.equals(line.id!) &
-          t.type.inSet({
-            TicketEventType.called,
-            TicketEventType.cancelled,
-            TicketEventType.removed,
-            TicketEventType.reslotted,
-            TicketEventType.graceExpired,
-            TicketEventType.arrivalExpired,
-            TicketEventType.markedNoShow,
-            TicketEventType.priorityInserted,
-          }),
-      orderBy: (t) => t.at.desc(),
-    );
 
-    final push = await PushTarget.db.findFirstRow(
-      session,
-      where: (t) => t.ticketId.equals(ticket.id!) & t.active.equals(true),
-    );
-    final sms = await SmsTarget.db.findFirstRow(
-      session,
-      where: (t) => t.ticketId.equals(ticket.id!) & t.active.equals(true),
-    );
+    final inSnapshot = snap.view.tickets.where((t) => t.id == ticket.id);
+    final bool pushActive;
+    final bool smsActive;
+    if (inSnapshot.isNotEmpty) {
+      pushActive = inSnapshot.first.hasPush;
+      smsActive = inSnapshot.first.hasSms;
+    } else {
+      pushActive =
+          await PushTarget.db.count(
+            session,
+            where: (t) => t.ticketId.equals(ticket.id!) & t.active.equals(true),
+          ) >
+          0;
+      smsActive =
+          await SmsTarget.db.count(
+            session,
+            where: (t) => t.ticketId.equals(ticket.id!) & t.active.equals(true),
+          ) >
+          0;
+    }
+    final sms = smsActive
+        ? await SmsTarget.db.findFirstRow(
+            session,
+            where: (t) => t.ticketId.equals(ticket.id!) & t.active.equals(true),
+          )
+        : null;
 
     String? toToken;
     String? toLabel;
@@ -290,7 +336,9 @@ abstract final class Views {
       etaMinutes: etaSeconds == null ? null : Eta.minutes(etaSeconds),
       etaText: etaSeconds == null ? null : Eta.text(etaSeconds, early: early),
       etaIsEstimate: early,
-      roomName: room?.name,
+      roomName: ticket.roomId == null
+          ? null
+          : presence.roomNames[ticket.roomId],
       nowServingLabel: nowServing,
       nextAfterLabel: nextAfter,
       graceEndsAt: graceEnds,
@@ -299,14 +347,14 @@ abstract final class Views {
       reslotCount: ticket.reslotCount,
       maxReslots: clinic.maxReslots,
       headsUpSent: ticket.headsUpSentAt != null,
-      lineMovedAt: lastMove?.at,
+      lineMovedAt: await lineMovedAt(session, line),
       deskOnline: presence.deskOnline,
       transferredToToken: toToken,
       transferredToLabel: toLabel,
       transferredToLineName: toLine,
       closedReason: ticket.closedReason,
-      pushActive: push != null,
-      smsActive: sms != null,
+      pushActive: pushActive,
+      smsActive: smsActive,
       smsEnabled: clinic.smsEnabled && !clinic.isSandbox,
       smsLast4: sms?.phoneLast4,
       isDemo: ticket.isDemo,
@@ -433,6 +481,19 @@ abstract final class Views {
       serverTime: DateTime.now().toUtc(),
     );
   }
+}
+
+/// Desk presence for one line, shared by every patient on it.
+class LinePresence {
+  const LinePresence({
+    required this.activeRooms,
+    required this.deskOnline,
+    required this.roomNames,
+  });
+
+  final int activeRooms;
+  final bool deskOnline;
+  final Map<UuidValue, String> roomNames;
 }
 
 /// One line's cached ordering, shared by every patient on it.

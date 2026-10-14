@@ -10,6 +10,7 @@ import 'line_queue.dart';
 import 'queue_service.dart';
 import 'reports.dart';
 import 'timers.dart';
+import 'views.dart';
 
 /// Day close, nightly upkeep and the two sweeps (PRD 11).
 abstract final class ClinicJobs {
@@ -181,6 +182,7 @@ abstract final class ClinicJobs {
         where: (t) => t.clinicId.equals(clinicId),
       );
       for (final line in lines) {
+        Views.presenceChanged(line.id!);
         await session.messages.postMessage(
           'line.${line.id}',
           LineChanged(

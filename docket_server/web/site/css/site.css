@@ -1,0 +1,1109 @@
+/* Docket site. Raw values come from tokens.css, which is generated from
+   design/tokens.json. This file maps them to page roles and lays out
+   DESIGN.md section 4. */
+
+@layer reset, base, layout, components, pages;
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  src: url("../fonts/atkinson-hyperlegible-next.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible Mono";
+  src: url("../fonts/atkinson-hyperlegible-mono.woff2") format("woff2");
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  ul[class],
+  ol[class] {
+    list-style: none;
+    padding: 0;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+
+    --page: var(--color-daylight);
+    --ink: var(--color-register);
+    --ink-soft: var(--color-register-soft);
+    --focus-ring: var(--color-register);
+    --bar: var(--color-register);
+    --bar-soft: var(--color-register-soft);
+    --scrim: color-mix(in srgb, var(--color-night) 55%, transparent);
+
+    /* --shadow-ticket as drop shadows, which follow the notches cut by the
+       mask. A box shadow keeps to the rectangle, so on a daylight ticket the
+       notches would vanish into the page. */
+    --ticket-drop-shadow:
+      drop-shadow(0 1px 2px color-mix(in srgb, var(--color-night) 8%, transparent))
+      drop-shadow(0 18px 24px color-mix(in srgb, var(--color-night) 15%, transparent));
+
+    --gutter: clamp(1rem, 4vw, 4rem);
+    --page-max: 90rem;
+    --measure: 66ch;
+    --measure-lead: 46ch;
+    --idea-gap: var(--space-64);
+  }
+
+  @media (width >= 900px) {
+    :root {
+      --idea-gap: var(--space-96);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: var(--color-night);
+      --ink: var(--color-daylight);
+      --ink-soft: var(--color-night-soft);
+      --focus-ring: var(--color-danfo);
+      --bar: var(--color-daylight);
+      --bar-soft: var(--color-night-soft);
+    }
+  }
+
+  html:has(.menu-sheet[open]) {
+    overflow: hidden;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body-size);
+    line-height: var(--text-body-leading);
+    font-weight: var(--text-body-weight);
+  }
+
+  main {
+    flex: 1 0 auto;
+  }
+
+  main:focus {
+    outline: none;
+  }
+
+  h1 {
+    font-size: var(--text-display-size);
+    line-height: var(--text-display-leading);
+    font-weight: var(--text-display-weight);
+    letter-spacing: var(--text-display-tracking);
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-size: var(--text-heading-size);
+    line-height: var(--text-heading-leading);
+    font-weight: var(--text-heading-weight);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: var(--text-subheading-size);
+    line-height: var(--text-subheading-leading);
+    font-weight: var(--text-subheading-weight);
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dd,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+  }
+
+  a:hover {
+    text-decoration-thickness: 0.14em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  code,
+  kbd {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 700;
+  }
+
+  ::selection {
+    background: var(--color-danfo);
+    color: var(--color-register);
+  }
+}
+
+@layer layout {
+  .site-header,
+  main,
+  .next,
+  .site-footer {
+    width: 100%;
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8) var(--space-24);
+    padding-block: var(--space-24);
+  }
+
+  main {
+    padding-block-start: var(--space-32);
+  }
+
+  .page-head > * + * {
+    margin-block-start: var(--space-24);
+  }
+
+  @media (width >= 768px) {
+    .page-head h1 {
+      max-width: 14ch;
+    }
+  }
+
+  .page-head h1 + * {
+    margin-block-start: var(--space-32);
+  }
+
+  .page-head p {
+    max-width: var(--measure);
+  }
+
+  .page-head .lead {
+    max-width: var(--measure-lead);
+  }
+
+  .ideas {
+    display: grid;
+    gap: var(--idea-gap);
+    margin-block-start: var(--idea-gap);
+  }
+
+  .idea {
+    margin-block-start: var(--idea-gap);
+  }
+
+  .prose {
+    max-width: var(--measure);
+  }
+
+  .prose > * + *,
+  .prose section > * + *,
+  .prose li > * + * {
+    margin-block-start: var(--space-12);
+  }
+
+  .prose > section + section,
+  .prose > li + li {
+    margin-block-start: var(--space-48);
+  }
+
+  .prose h2 {
+    font-size: var(--text-subheading-size);
+    line-height: var(--text-subheading-leading);
+    font-weight: var(--text-subheading-weight);
+  }
+
+  .lead {
+    font-size: var(--text-lead-size);
+    line-height: var(--text-lead-leading);
+    font-weight: var(--text-lead-weight);
+  }
+
+  .soft {
+    color: var(--ink-soft);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-16) var(--space-32);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@layer components {
+  .skip-link {
+    position: absolute;
+    inset-block-start: var(--space-8);
+    inset-inline-start: var(--space-8);
+    z-index: 1;
+    padding: var(--space-12) var(--space-24);
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--page);
+    font-weight: 700;
+    text-decoration: none;
+    translate: 0 -200%;
+  }
+
+  .skip-link:focus {
+    translate: none;
+  }
+
+  /* Header */
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    min-height: 44px;
+    font-size: var(--text-subheading-size);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+    text-decoration: none;
+    view-transition-name: wordmark;
+  }
+
+  .mark {
+    width: 1.1em;
+    height: auto;
+    flex: none;
+  }
+
+  .mark-ticket {
+    fill: var(--color-danfo);
+  }
+
+  .mark-dots {
+    fill: var(--color-register);
+  }
+
+  .site-nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .site-nav ul {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-24);
+  }
+
+  .site-nav a {
+    display: inline-block;
+    padding-block: var(--space-8);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .site-nav a[aria-current="page"],
+  .menu-pages a[aria-current="page"],
+  .footer-pages a[aria-current="page"] {
+    text-decoration: underline;
+    text-decoration-thickness: 0.14em;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  @media (width < 900px) {
+    .site-header {
+      column-gap: var(--space-8);
+      padding-block: var(--space-16);
+    }
+
+    .site-nav {
+      display: none;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding-inline: var(--space-8);
+      margin-inline-end: calc(var(--space-8) * -1);
+      font-size: var(--text-small-size);
+      font-weight: 700;
+      text-decoration: none;
+    }
+  }
+
+  @media (width >= 1280px) {
+    .site-nav {
+      order: 0;
+      flex: 1 1 auto;
+      margin-inline-start: var(--space-24);
+    }
+  }
+
+  /* Pills */
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: var(--space-12) var(--space-24);
+    border: 0;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-body-size);
+    line-height: 1.2;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .pill:active,
+  .pill.is-pressed {
+    scale: 0.95;
+    transition:
+      scale var(--duration-press) var(--ease),
+      background-color var(--duration-press) var(--ease);
+  }
+
+  .pill-danfo {
+    background: var(--color-danfo);
+    color: var(--color-register);
+  }
+
+  .pill-register {
+    background: var(--ink);
+    color: var(--page);
+  }
+
+  .pill-register:active,
+  .pill-register.is-pressed {
+    background: color-mix(in srgb, var(--ink) 78%, var(--page));
+  }
+
+  .header-try {
+    min-height: 44px;
+    margin-inline-start: auto;
+    padding-inline: var(--space-16);
+    font-size: var(--text-small-size);
+  }
+
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    font-weight: 700;
+  }
+
+  /* Menu sheet */
+
+  .menu-sheet {
+    position: fixed;
+    inset: var(--space-16) 0 0;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    padding: var(--space-16) var(--gutter) var(--space-48);
+    border: 0;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    background: var(--page);
+    color: var(--ink);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .menu-sheet[open] {
+    animation: sheet-in var(--duration-state) var(--ease);
+  }
+
+  .menu-sheet::backdrop {
+    background: var(--scrim);
+  }
+
+  .menu-head {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .menu-close {
+    min-height: 44px;
+    padding-inline: var(--space-8);
+    margin-inline-end: calc(var(--space-8) * -1);
+    border: 0;
+    background: none;
+    font-size: var(--text-small-size);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .menu-pages {
+    display: grid;
+    margin-block-start: var(--space-8);
+  }
+
+  .menu-pages a {
+    display: block;
+    padding-block: var(--space-8);
+    font-size: var(--text-heading-size);
+    line-height: var(--text-heading-leading);
+    font-weight: var(--text-heading-weight);
+    text-decoration: none;
+  }
+
+  @keyframes sheet-in {
+    from {
+      translate: 0 var(--space-48);
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Next link and footer */
+
+  .next {
+    padding-block: var(--idea-gap) var(--space-48);
+  }
+
+  .next-label {
+    color: var(--ink-soft);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+    font-weight: 500;
+  }
+
+  .next-link {
+    display: inline-block;
+    margin-block-start: var(--space-8);
+    font-size: calc(var(--text-display-size) * 0.6);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: var(--text-display-tracking);
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.14em;
+    view-transition-name: next-link;
+  }
+
+  .site-footer {
+    display: grid;
+    gap: var(--space-16);
+    padding-block: var(--space-48) var(--space-64);
+    color: var(--ink-soft);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+    font-weight: var(--text-small-weight);
+  }
+
+  .footer-pages {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-24);
+  }
+
+  .site-footer a {
+    display: inline-block;
+    padding-block: var(--space-4);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .site-footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* The ticket, DESIGN.md 3.4. The stub and the body each cut half of the
+     two notches, so the tear line sits wherever the stub ends. */
+
+  .ticket {
+    --field: var(--color-daylight);
+    --on-field: var(--color-register);
+    --on-field-soft: var(--color-register-soft);
+    --headline: var(--on-field);
+
+    container-type: inline-size;
+    width: 100%;
+    max-width: 22rem;
+    border-radius: var(--radius-ticket);
+    filter: var(--ticket-drop-shadow);
+    color: var(--on-field);
+  }
+
+  .ticket-stub,
+  .ticket-body {
+    --notches:
+      radial-gradient(circle at 0 var(--tear), transparent var(--notch), black calc(var(--notch) + 0.5px)),
+      radial-gradient(circle at 100% var(--tear), transparent var(--notch), black calc(var(--notch) + 0.5px));
+
+    background-color: var(--field);
+    mask: var(--notches);
+    mask-composite: intersect;
+  }
+
+  .ticket-stub {
+    --tear: 100%;
+
+    padding: var(--space-24) var(--space-24) var(--space-16);
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+  }
+
+  .ticket-body {
+    --tear: 0%;
+
+    position: relative;
+    display: grid;
+    padding: var(--space-24);
+    border-end-start-radius: inherit;
+    border-end-end-radius: inherit;
+  }
+
+  .ticket-body::before {
+    content: "";
+    position: absolute;
+    inset-block-start: -1px;
+    inset-inline: calc(var(--notch) + var(--space-8));
+    border-block-start: 2px dotted color-mix(in srgb, currentColor 45%, transparent);
+  }
+
+  .ticket-line {
+    color: var(--on-field-soft);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+    font-weight: 500;
+  }
+
+  .ticket-label {
+    font-size: 26cqi;
+    line-height: var(--text-display-leading);
+    font-weight: 800;
+    letter-spacing: var(--text-display-tracking);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ticket-line + .ticket-label {
+    margin-block-start: var(--space-8);
+  }
+
+  .ticket-headline {
+    color: var(--headline);
+    font-size: max(var(--text-subheading-size), 8.5cqi);
+    line-height: 1.12;
+    font-weight: 800;
+    text-wrap: balance;
+  }
+
+  .ticket-copy {
+    font-size: var(--text-body-size);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .ticket-headline + .ticket-copy {
+    margin-block-start: var(--space-8);
+  }
+
+  .ticket-strip {
+    display: grid;
+    gap: var(--space-4);
+    margin-block-start: var(--space-16);
+    color: var(--on-field-soft);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+    font-weight: 500;
+  }
+
+  .countdown {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  .ticket[data-state="heads-up"] {
+    --field: var(--color-danfo);
+    --on-field: var(--color-register);
+    --on-field-soft: var(--color-register);
+  }
+
+  .ticket[data-state="called"] {
+    --field: var(--color-go);
+    --on-field: var(--color-daylight);
+    --on-field-soft: var(--color-daylight);
+  }
+
+  .ticket[data-state="confirmed"] {
+    --field: var(--color-register);
+    --on-field: var(--color-daylight);
+    --on-field-soft: var(--color-night-soft);
+  }
+
+  .ticket[data-state="reslot"] {
+    --headline: var(--color-missed);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .ticket[data-state="waiting"] {
+      --field: var(--color-register-lift);
+      --on-field: var(--color-daylight);
+      --on-field-soft: var(--color-night-soft);
+    }
+  }
+
+  .ticket-mini {
+    max-width: 13rem;
+  }
+
+  .ticket-mini .ticket-stub {
+    padding: var(--space-16) var(--space-16) var(--space-12);
+  }
+
+  .ticket-mini .ticket-body {
+    padding: var(--space-16);
+  }
+
+  .ticket-mini .ticket-copy,
+  .ticket-mini .ticket-headline {
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+    font-weight: 700;
+  }
+
+  /* Screenshots of the running app */
+
+  .shot img {
+    height: auto;
+  }
+
+  .shot figcaption {
+    margin-block-start: var(--space-12);
+    color: var(--ink-soft);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill:active,
+    .pill.is-pressed {
+      scale: none;
+    }
+
+    .menu-sheet[open] {
+      animation-name: fade-in;
+    }
+  }
+}
+
+@layer pages {
+  /* Home */
+
+  .hero {
+    display: grid;
+    gap: var(--space-64);
+    align-items: center;
+  }
+
+  .hero-copy {
+    container-type: inline-size;
+  }
+
+  .hero h1 {
+    font-size: min(var(--text-display-size), 19cqi);
+  }
+
+  .hero .lead {
+    margin-block-start: var(--space-32);
+    max-width: var(--measure-lead);
+  }
+
+  .hero .actions {
+    margin-block-start: var(--space-32);
+  }
+
+  .demo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-24);
+  }
+
+  .ticket-hero {
+    max-width: 23rem;
+    border-radius: var(--radius-ticket-hero);
+  }
+
+  .ticket-hero .ticket-step {
+    grid-area: 1 / 1;
+  }
+
+  /* Only the home ticket changes state, and only once the script runs, so
+     nothing else on the site has a transition to replay while a page loads.
+     The field color cross-fades and the text swaps with a short fade. */
+  .is-live .ticket,
+  .is-live .ticket-headline {
+    transition: color var(--duration-ticket) var(--ease);
+  }
+
+  .is-live .ticket-stub,
+  .is-live .ticket-body {
+    transition: background-color var(--duration-ticket) var(--ease);
+  }
+
+  .is-live .ticket-step {
+    transition:
+      opacity var(--duration-state) var(--ease),
+      visibility var(--duration-state);
+  }
+
+  .ticket-hero .ticket-step:not([data-active]) {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .hero-demo:not(.is-live) .call-next {
+    visibility: hidden;
+  }
+
+  .call-next {
+    min-height: 44px;
+    padding-inline: var(--space-16);
+    font-size: var(--text-small-size);
+  }
+
+  .demo-note {
+    margin-block-start: var(--space-32);
+    color: var(--ink-soft);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+  }
+
+  .evidence {
+    max-width: var(--measure);
+    margin-block-start: var(--idea-gap);
+    font-size: var(--text-lead-size);
+    line-height: var(--text-lead-leading);
+  }
+
+  @media (width >= 900px) {
+    .hero {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      column-gap: var(--space-96);
+    }
+  }
+
+  /* The problem */
+
+  .chart-figure {
+    max-width: 48rem;
+    margin-block-start: var(--space-32);
+  }
+
+  .chart {
+    overflow: visible;
+    font-size: var(--text-small-size);
+  }
+
+  .chart text {
+    fill: var(--ink);
+  }
+
+  .chart .chart-detail {
+    fill: var(--ink-soft);
+  }
+
+  .chart-place,
+  .chart-value {
+    font-weight: 700;
+  }
+
+  .chart-value {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chart-bar {
+    fill: var(--bar);
+  }
+
+  .chart-bar-soft {
+    fill: var(--bar-soft);
+  }
+
+  .chart-baseline {
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  .sources {
+    margin-block-start: var(--space-32);
+    color: var(--ink-soft);
+    font-size: var(--text-small-size);
+    line-height: var(--text-small-leading);
+  }
+
+  .sources h3 {
+    color: var(--ink);
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  .sources ul {
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-8);
+    margin-block-start: var(--space-8);
+  }
+
+  .sources a {
+    color: var(--ink);
+  }
+
+  /* How it works */
+
+  .steps {
+    counter-reset: step;
+    display: grid;
+    gap: var(--space-48);
+    margin-block-start: var(--idea-gap);
+  }
+
+  .step {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: var(--space-48) minmax(0, 1fr);
+    gap: var(--space-24) var(--space-16);
+    align-items: start;
+  }
+
+  .step::before {
+    content: counter(step) / "";
+    grid-row: span 2;
+    font-size: var(--text-heading-size);
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  .step-text > * + * {
+    margin-block-start: var(--space-8);
+  }
+
+  .step-text h2 {
+    font-size: var(--text-subheading-size);
+    line-height: var(--text-subheading-leading);
+    font-weight: var(--text-subheading-weight);
+  }
+
+  .step .ticket {
+    grid-column: 2;
+  }
+
+  @media (width >= 768px) {
+    .step {
+      grid-template-columns: var(--space-64) minmax(0, 30rem) 13rem;
+      column-gap: var(--space-48);
+      align-items: center;
+    }
+
+    .step::before {
+      grid-row: auto;
+    }
+
+    .step .ticket {
+      grid-column: 3;
+    }
+  }
+
+  /* For patients and for clinics */
+
+  .taps {
+    padding-inline-start: 1.5em;
+    list-style: decimal;
+  }
+
+  .taps li + li {
+    margin-block-start: var(--space-4);
+  }
+
+  .with-shot {
+    align-items: start;
+  }
+
+  @media (width >= 1100px) {
+    .with-shot {
+      grid-template-columns: minmax(0, var(--measure)) auto;
+      column-gap: var(--space-96);
+    }
+  }
+
+  .feature .shot {
+    max-width: 60rem;
+    margin-block-start: var(--space-32);
+  }
+
+  .keys {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .keys div {
+    display: flex;
+    gap: var(--space-16);
+    align-items: baseline;
+  }
+
+  .keys dt {
+    min-width: 4.5rem;
+  }
+
+  /* Reliability */
+
+  .mechanisms h2 {
+    font-size: var(--text-subheading-size);
+  }
+
+  .measurements {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  .measurements dt {
+    font-weight: 700;
+  }
+
+  .measure-value {
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Under the hood */
+
+  .pairs {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  .pairs dt {
+    font-weight: 700;
+  }
+
+  .pairs dd {
+    margin-block-start: var(--space-4);
+  }
+
+  .diagram {
+    max-width: 30rem;
+    color: var(--ink);
+  }
+
+  @media (width >= 1100px) {
+    .with-diagram {
+      grid-template-columns: minmax(0, var(--measure)) minmax(0, 30rem);
+      column-gap: var(--space-96);
+      align-items: start;
+    }
+
+    .with-diagram > :not(.pairs, .diagram) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .diagram svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .diagram text,
+  .diagram-core {
+    fill: currentColor;
+  }
+
+  .diagram .diagram-soft,
+  .diagram .diagram-soft text {
+    fill: var(--ink-soft);
+  }
+
+  .diagram .diagram-core-text {
+    fill: var(--page);
+  }
+
+  .links {
+    display: grid;
+    gap: var(--space-12);
+  }
+
+  .disclosure {
+    color: var(--ink-soft);
+  }
+
+  .prose .disclosure {
+    margin-block-start: var(--space-32);
+  }
+}

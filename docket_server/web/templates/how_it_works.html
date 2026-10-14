@@ -1,0 +1,60 @@
+<header class="page-head">
+  <h1>One button at the desk. Every phone moves.</h1>
+</header>
+<ol class="steps">
+  <li class="step">
+    <div class="step-text">
+      <h2>Scan the code at the desk</h2>
+      <p>Nothing to install. The camera on your phone opens your ticket in the browser.</p>
+    </div>
+    <div class="ticket ticket-mini" data-state="waiting" role="img" aria-label="Ticket C-031, 3rd in line">
+      <div class="ticket-stub"><p class="ticket-label">C-031</p></div>
+      <div class="ticket-body"><p class="ticket-copy">You're 3rd in line</p></div>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-text">
+      <h2>Wait anywhere</h2>
+      <p>Your place is live on your phone. When the desk calls someone, every phone in the line moves at once.</p>
+    </div>
+    <div class="ticket ticket-mini" data-state="waiting" role="img" aria-label="Ticket C-031, 2nd in line">
+      <div class="ticket-stub"><p class="ticket-label">C-031</p></div>
+      <div class="ticket-body"><p class="ticket-copy">You're 2nd in line</p></div>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-text">
+      <h2>Get a heads-up</h2>
+      <p>When you're {{headsUpPosition}} in line or about {{headsUpMinutes}} minutes away, Docket tells you to start heading back.</p>
+    </div>
+    <div class="ticket ticket-mini" data-state="heads-up" role="img" aria-label="Ticket C-031, start heading back">
+      <div class="ticket-stub"><p class="ticket-label">C-031</p></div>
+      <div class="ticket-body"><p class="ticket-headline">Start heading back</p></div>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-text">
+      <h2>Your turn</h2>
+      <p>Go to the room and tap I'm coming within {{graceMinutes}}.</p>
+    </div>
+    <div class="ticket ticket-mini" data-state="called" role="img" aria-label="Ticket C-031, your turn, go to Room 2">
+      <div class="ticket-stub"><p class="ticket-label">C-031</p></div>
+      <div class="ticket-body"><p class="ticket-headline">Your turn. Go to Room 2.</p></div>
+    </div>
+  </li>
+  <li class="step">
+    <div class="step-text">
+      <h2>Missed it?</h2>
+      <p>You go back {{reslotOffset}} places, {{reslotTimes}}. Miss again and the ticket expires, and the desk takes it from there.</p>
+    </div>
+    <div class="ticket ticket-mini" data-state="reslot" role="img" aria-label="Ticket C-031, you missed your call">
+      <div class="ticket-stub"><p class="ticket-label">C-031</p></div>
+      <div class="ticket-body"><p class="ticket-headline">You missed your call</p></div>
+    </div>
+  </li>
+</ol>
+<section class="idea prose" aria-labelledby="desk-title">
+  <h2 id="desk-title">At the desk</h2>
+  <p>The receptionist has one main button. Call next sends the next patient to their room and moves every phone in the line. Start service when the patient walks in, and Finish when they leave.</p>
+  <p class="soft">These are the default timings. Each clinic can change them in its settings.</p>
+</section>

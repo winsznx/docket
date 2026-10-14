@@ -3,13 +3,14 @@ import 'dart:io';
 
 import 'package:docket_client/docket_client.dart';
 
-/// PRD 22.4 restart test, the client half. Sets a 60-second grace window on a
+/// PRD 22.4 restart test, the client half. Sets a short grace window on a
 /// fresh sandbox, calls a patient, and waits for the re-slot. Restart the
 /// server while it waits. Prints how late the re-slot landed.
 ///
-///   dart run bin/restart.dart API_URL
+///   dart run bin/restart.dart API_URL [graceSeconds=60]
 Future<void> main(List<String> args) async {
   final api = args[0];
+  final grace = args.length > 1 ? int.parse(args[1]) : 60;
   final client = Client(api);
   final sb = await client.sandbox.start();
   final owner = await client.owner.getOwnerView(sb.clinicId, sb.sandboxToken);
@@ -17,7 +18,7 @@ Future<void> main(List<String> args) async {
   await client.owner.updateSettings(
     sb.clinicId,
     ClinicSettings(
-      graceSeconds: 60,
+      graceSeconds: grace,
       graceReminderSeconds: 15,
       arrivalSeconds: c.arrivalSeconds,
       headsUpPositions: c.headsUpPositions,
@@ -61,7 +62,7 @@ Future<void> main(List<String> args) async {
   stdout.writeln('CALLED grace ends ${graceEnd.toIso8601String()}');
   client.close();
 
-  final deadline = DateTime.now().add(const Duration(minutes: 4));
+  final deadline = DateTime.now().add(Duration(seconds: grace + 240));
   while (DateTime.now().isBefore(deadline)) {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     final probe = Client(api);
@@ -82,6 +83,6 @@ Future<void> main(List<String> args) async {
       probe.close();
     }
   }
-  stdout.writeln('FAILED no re-slot within 4 minutes');
+  stdout.writeln('FAILED no re-slot within 4 minutes of the grace end');
   exit(1);
 }

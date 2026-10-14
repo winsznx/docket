@@ -1,0 +1,46 @@
+<header class="page-head">
+  <h1>Nothing to install.</h1>
+  <p class="lead">Docket is a web page. Scan the code at the clinic desk and your ticket opens in the browser your phone already has.</p>
+</header>
+<div class="ideas with-shot">
+  <div class="prose">
+    <section aria-labelledby="any-phone">
+      <h2 id="any-phone">Any phone with a browser</h2>
+      <p>Android or iPhone, it doesn't matter. There's no app to download, no account and no password. Keep the page open, or come back to it from your browser's history.</p>
+    </section>
+    <section aria-labelledby="alerts">
+      <h2 id="alerts">Alerts by push, or by text</h2>
+      <p>Tap Get alerts on your ticket and Docket sends a notification when you're close and again when it's your turn. Where the clinic offers it, you can ask for a text message instead.</p>
+    </section>
+    <section aria-labelledby="iphone">
+      <h2 id="iphone">On iPhone, add Docket to the Home Screen</h2>
+      <p>iPhones only show alerts from web apps on the Home Screen, from iOS 16.4 on. It takes three taps in Safari.</p>
+      <ol class="taps">
+        <li>Tap the Share button.</li>
+        <li>Tap Add to Home Screen.</li>
+        <li>Tap Add.</li>
+      </ol>
+      <p>Then open Docket from your Home Screen and tap Get alerts.</p>
+    </section>
+    <section aria-labelledby="missed">
+      <h2 id="missed">If you miss your call</h2>
+      <p>You have {{graceMinutes}} to tap I'm coming. If you don't, you go back into the line {{reslotOffset}} places from the front, {{reslotTimes}}. Miss again and the ticket expires, and the desk takes it from there.</p>
+    </section>
+    <section aria-labelledby="leaving">
+      <h2 id="leaving">Leaving the line</h2>
+      <p>Tap Leave line on your ticket and confirm. Your place goes to the next person straight away.</p>
+    </section>
+    <section aria-labelledby="keeps">
+      <h2 id="keeps">What Docket keeps</h2>
+      <p>Your initials or first name, and your phone number only if you choose text alerts. Both are deleted the day after your visit. <a href="/privacy">Read the privacy page</a> for the rest.</p>
+    </section>
+    <section aria-labelledby="sun">
+      <h2 id="sun">Type made for reading in the sun</h2>
+      <p>Docket is set in Atkinson Hyperlegible, which the Braille Institute made for people with low vision. Big numbers and strong contrast keep your place easy to read outdoors on a small screen.</p>
+    </section>
+  </div>
+  {{#ticketShot}}<figure class="shot shot-phone">
+    <img src="{{{src}}}" width="{{width}}" height="{{height}}" alt="{{alt}}" loading="lazy" decoding="async">
+    <figcaption>{{caption}}</figcaption>
+  </figure>{{/ticketShot}}
+</div>

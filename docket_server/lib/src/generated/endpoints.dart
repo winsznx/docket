@@ -1084,6 +1084,27 @@ class Endpoints extends _is.EndpointDispatch {
                 params['count'],
               ),
         ),
+        'idle': _is.MethodStreamConnector(
+          name: 'idle',
+          params: {
+            'seconds': _is.ParameterDescription(
+              name: 'seconds',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          streamParams: {},
+          returnType: _is.MethodStreamReturnType.streamType,
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+                Map<String, Stream> streamParams,
+              ) => (endpoints['smoke'] as _ivabzmjp.SmokeEndpoint).idle(
+                session,
+                params['seconds'],
+              ),
+        ),
       },
     );
     connectors['staff'] = _is.EndpointConnector(

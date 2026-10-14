@@ -1,0 +1,30 @@
+<header class="page-head">
+  <h1>Built for bad internet and restarts.</h1>
+  <p class="lead">A clinic's internet drops, servers restart and phones lose signal. Three things keep everyone's place safe when that happens.</p>
+</header>
+<div class="ideas">
+  <ul class="prose mechanisms">
+    <li>
+      <h2>The desk keeps calling offline</h2>
+      <p>Every desk action is saved on the device first. If the internet drops, the receptionist keeps calling patients. When the connection comes back, the desk sends what it did and the server checks each action. The server has the final say, and anything it turns down shows up at the desk with the reason.</p>
+    </li>
+    <li>
+      <h2>Timers live in the database</h2>
+      <p>When a patient is called, the moment their {{graceMinutes}} to confirm run out is written to Postgres, and the server acts on it from there. A restart can't lose anyone's place, because the deadline is still in the database when the server comes back.</p>
+    </li>
+    <li>
+      <h2>Phones catch up on their own</h2>
+      <p>A phone that drops off reconnects by itself and loads the line as it is now. While it's reconnecting, the ticket dims and shows the time of its last update, so an old screen never passes for a live one.</p>
+    </li>
+  </ul>
+  {{#hasMeasurements}}<section class="prose" aria-labelledby="measured">
+    <h2 id="measured">Measured numbers</h2>
+    <dl class="measurements">
+      {{#measurements}}<div>
+        <dt>{{measure}}</dt>
+        <dd><span class="measure-value">{{value}}</span> over {{runs}}, measured on <time datetime="{{measuredOnIso}}">{{measuredOn}}</time>. {{method}}</dd>
+      </div>
+      {{/measurements}}
+    </dl>
+  </section>{{/hasMeasurements}}
+</div>

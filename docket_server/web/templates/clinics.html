@@ -1,0 +1,65 @@
+<header class="page-head">
+  <h1>Runs on the desk you already have.</h1>
+  <p class="lead">Docket runs in the browser on the computer or tablet at your front desk. The board runs on any TV with a browser. There's nothing to buy and nothing to install.</p>
+  <p class="actions">
+    <a class="pill pill-register" href="/owner">Set up your clinic</a>
+    <a class="pill pill-danfo" href="/try">Try a live clinic</a>
+  </p>
+</header>
+<div class="ideas">
+  <section class="feature" aria-labelledby="desk">
+    <div class="prose">
+      <h2 id="desk">The desk</h2>
+      <p>The receptionist sees who's been called, their countdown and whether the alert reached their phone. Call next is the biggest button on the screen, and when it can't call anyone it says why.</p>
+    </div>
+    {{#deskShot}}<figure class="shot">
+      <img src="{{{src}}}" width="{{width}}" height="{{height}}" alt="{{alt}}" loading="lazy" decoding="async">
+      <figcaption>{{caption}}</figcaption>
+    </figure>{{/deskShot}}
+  </section>
+  <section class="feature" aria-labelledby="board">
+    <div class="prose">
+      <h2 id="board">The waiting-room board</h2>
+      <p>Open the board on the TV in the waiting room. It calls every number aloud, shows which room to go to and keeps a QR code on screen so people can join from their seat.</p>
+    </div>
+    {{#boardShot}}<figure class="shot">
+      <img src="{{{src}}}" width="{{width}}" height="{{height}}" alt="{{alt}}" loading="lazy" decoding="async">
+      <figcaption>{{caption}}</figcaption>
+    </figure>{{/boardShot}}
+  </section>
+  <section class="feature" aria-labelledby="owner">
+    <div class="prose">
+      <h2 id="owner">Setup for the owner</h2>
+      <p>Set your hours, lines and rooms. Print a poster with a QR code for each line, invite staff with a link, and read the end-of-day report with waits and arrivals by the hour.</p>
+    </div>
+    {{#ownerShot}}<figure class="shot">
+      <img src="{{{src}}}" width="{{width}}" height="{{height}}" alt="{{alt}}" loading="lazy" decoding="async">
+      <figcaption>{{caption}}</figcaption>
+    </figure>{{/ownerShot}}
+  </section>
+  <div class="prose">
+    <section aria-labelledby="keys">
+      <h2 id="keys">Keyboard shortcuts</h2>
+      <p>On a computer, the desk runs from the keyboard.</p>
+      <dl class="keys">
+        <div><dt><kbd>Space</kbd></dt><dd>Call next</dd></div>
+        <div><dt><kbd>R</kbd></dt><dd>Recall</dd></div>
+        <div><dt><kbd>S</kbd></dt><dd>Start service</dd></div>
+        <div><dt><kbd>F</kbd></dt><dd>Finish</dd></div>
+        <div><dt><kbd>N</kbd></dt><dd>Mark a no-show</dd></div>
+      </dl>
+    </section>
+    <section aria-labelledby="walk-ins">
+      <h2 id="walk-ins">Walk-ins the desk adds</h2>
+      <p>Add walk-in puts someone in line from the desk and shows a QR code they can scan to follow their place. Without a phone they still get a number, and the board calls it aloud.</p>
+    </section>
+    <section aria-labelledby="priority">
+      <h2 id="priority">Priority with a reason</h2>
+      <p>Add priority puts someone ahead of the normal line, and the desk has to say why. The reason stays with the ticket in the queue and the audit log, and the form asks for no medical details.</p>
+    </section>
+    <section aria-labelledby="transfer">
+      <h2 id="transfer">Transfer to Lab</h2>
+      <p>When a consultation ends with a test, Transfer moves the patient into the Lab line. Their phone follows the new ticket on its own.</p>
+    </section>
+  </div>
+</div>

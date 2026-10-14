@@ -673,6 +673,20 @@ class EndpointSmoke extends _isc.EndpointRef {
         {},
       );
 
+  /// Sends one value, stays silent for [seconds], then sends another, to
+  /// measure how long an idle stream survives Cloud's load balancer
+  /// (PRD 23).
+  _ida.Stream<_i51jr89c.SmokeTick> idle(int seconds) =>
+      caller.callStreamingServerEndpoint<
+        _ida.Stream<_i51jr89c.SmokeTick>,
+        _i51jr89c.SmokeTick
+      >(
+        'smoke',
+        'idle',
+        {'seconds': seconds},
+        {},
+      );
+
   _ida.Future<_ifwjb9hw.SmokeRun> schedule(int delaySeconds) =>
       caller.callServerEndpoint<_ifwjb9hw.SmokeRun>(
         'smoke',

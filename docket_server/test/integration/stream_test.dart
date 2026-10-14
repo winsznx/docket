@@ -60,6 +60,7 @@ void main() {
             ),
           ),
         );
+        await endpoints.futureCalls.clinicJobs.presenceSweep(builder);
         expect(
           (await endpoints.ticket.get(builder, me.ticketToken)).deskOnline,
           isFalse,

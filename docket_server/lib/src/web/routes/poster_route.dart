@@ -17,8 +17,9 @@ class PosterRoute extends Route {
   static pw.Font? _regular;
   static pw.Font? _bold;
 
-  static pw.Font _font(String file) =>
-      pw.Font.ttf(File('assets/fonts/$file').readAsBytesSync().buffer.asByteData());
+  static pw.Font _font(String file) => pw.Font.ttf(
+    File('assets/fonts/$file').readAsBytesSync().buffer.asByteData(),
+  );
 
   @override
   Future<Result> handleCall(Session session, Request request) async {
@@ -71,7 +72,10 @@ class PosterRoute extends Route {
       child: pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.SizedBox(width: 36, child: pw.Text(n, style: style(22, bold: true))),
+          pw.SizedBox(
+            width: 36,
+            child: pw.Text(n, style: style(22, bold: true)),
+          ),
           pw.Expanded(child: pw.Text(text, style: style(20))),
         ],
       ),
@@ -99,9 +103,18 @@ class PosterRoute extends Route {
               ),
             ),
             pw.SizedBox(height: 28),
-            step('1', 'Point your phone camera at the code. Nothing to install.'),
-            step('2', 'Your place in line shows on your phone. Step out if you like.'),
-            step('3', 'Come back when it says so. Tap I\'m coming when called.'),
+            step(
+              '1',
+              'Point your phone camera at the code. Nothing to install.',
+            ),
+            step(
+              '2',
+              'Your place in line shows on your phone. Step out if you like.',
+            ),
+            step(
+              '3',
+              'Come back when it says so. Tap I\'m coming when called.',
+            ),
             pw.Spacer(),
             pw.Text(url, style: style(13, color: soft)),
           ],

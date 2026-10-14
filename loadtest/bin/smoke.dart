@@ -8,6 +8,7 @@ import 'package:docket_client/docket_client.dart';
 ///   dart run bin/smoke.dart https://docket.api.serverpod.space/ stream
 ///   dart run bin/smoke.dart https://docket.api.serverpod.space/ schedule 60
 ///   dart run bin/smoke.dart https://docket.api.serverpod.space/ runs
+///   dart run bin/smoke.dart https://docket.api.serverpod.space/ idle 600
 Future<void> main(List<String> args) async {
   final client = Client(args[0]);
   switch (args[1]) {
@@ -23,6 +24,21 @@ Future<void> main(List<String> args) async {
       stdout.writeln(
         'stream done in ${DateTime.now().toUtc().difference(started).inMilliseconds} ms',
       );
+    case 'idle':
+      final seconds = int.parse(args[2]);
+      final opened = DateTime.now();
+      try {
+        await for (final tick in client.smoke.idle(seconds)) {
+          stdout.writeln(
+            'idle tick ${tick.n} after ${DateTime.now().difference(opened).inSeconds} s',
+          );
+        }
+        stdout.writeln('idle stream survived $seconds s');
+      } on Object catch (e) {
+        stdout.writeln(
+          'idle stream dropped after ${DateTime.now().difference(opened).inSeconds} s: $e',
+        );
+      }
     case 'schedule':
       final run = await client.smoke.schedule(int.parse(args[2]));
       stdout.writeln('scheduled ${run.id} for ${run.scheduledFor.toIso8601String()}');

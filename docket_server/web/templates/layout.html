@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="{{{canonicalUrl}}}">
+<meta name="theme-color" content="#FFC928">
+<link rel="icon" href="{{{@/site/img/favicon.svg}}}" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{{@/site/img/apple-touch-icon.png}}}">
+<link rel="preload" href="/site/fonts/atkinson-hyperlegible-next.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{{@/site/css/tokens.css}}}">
+<link rel="stylesheet" href="{{{@/site/css/site.css}}}">
+<script src="{{{@/site/js/site.js}}}" defer></script>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Docket">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:url" content="{{{canonicalUrl}}}">
+<meta property="og:image" content="{{{ogImageUrl}}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Docket. Wait anywhere. A queue ticket, C-031, telling its patient to start heading back.">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="wordmark" href="/"{{#isHome}} aria-current="page"{{/isHome}}>
+    <svg class="mark" viewBox="0 0 24 30" width="24" height="30" aria-hidden="true" focusable="false"><path class="mark-ticket" d="M5 0h14a5 5 0 0 1 5 5v2.5a3.5 3.5 0 0 0 0 7V25a5 5 0 0 1-5 5H5a5 5 0 0 1-5-5V14.5a3.5 3.5 0 0 0 0-7V5a5 5 0 0 1 5-5z"/><circle class="mark-dots" cx="8" cy="11" r="1.2"/><circle class="mark-dots" cx="12" cy="11" r="1.2"/><circle class="mark-dots" cx="16" cy="11" r="1.2"/></svg>
+    <span>Docket</span>
+  </a>
+  <nav class="site-nav" aria-label="Pages">
+    <ul>
+      {{#headerPages}}<li><a href="{{{path}}}"{{#current}} aria-current="page"{{/current}}>{{name}}</a></li>
+      {{/headerPages}}
+    </ul>
+  </nav>
+  <a class="pill pill-danfo header-try" href="{{{tryPath}}}">{{tryName}}</a>
+  <a class="menu-toggle" href="#site-footer" aria-controls="menu" data-menu-open>Menu</a>
+</header>
+<dialog class="menu-sheet" id="menu" aria-label="Menu">
+  <div class="menu-head">
+    <button type="button" class="menu-close" data-menu-close>Close</button>
+  </div>
+  <nav aria-label="Pages">
+    <ul class="menu-pages">
+      {{#allPages}}<li><a href="{{{path}}}"{{#current}} aria-current="page"{{/current}}>{{name}}</a></li>
+      {{/allPages}}<li><a href="{{{tryPath}}}">{{tryName}}</a></li>
+    </ul>
+  </nav>
+</dialog>
+<main id="main" tabindex="-1">
+{{{body}}}
+</main>
+<nav class="next" aria-label="Next page">
+  <p class="next-label" aria-hidden="true">Next</p>
+  <a class="next-link" href="{{{nextPath}}}">{{nextName}}</a>
+</nav>
+<footer class="site-footer" id="site-footer">
+  <nav aria-label="All pages">
+    <ul class="footer-pages">
+      {{#allPages}}<li><a href="{{{path}}}"{{#current}} aria-current="page"{{/current}}>{{name}}</a></li>
+      {{/allPages}}<li><a href="{{{tryPath}}}">{{tryName}}</a></li>
+    </ul>
+  </nav>
+  <p><a href="{{{repositoryUrl}}}">Docket on GitHub</a></p>
+  <p>Made in Lagos for Build Something Real, the Serverpod hackathon.</p>
+</footer>
+</body>
+</html>

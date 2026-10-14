@@ -33,13 +33,13 @@ serverpod:
       windows: >-
         (if exist web\app rmdir /S /Q web\app)
         & cd /D ..\docket_flutter
-        & set ARGS=web --release --base-href / --no-web-resources-cdn
+        & set ARGS=web --release --base-href / --pwa-strategy=none --no-web-resources-cdn
         && (call flutter build %ARGS% || (flutter clean && call flutter build %ARGS%))
         && xcopy /E /I /Y build\web ..\docket_server\web\app
       posix: |
         rm -rf ../docket_server/web/app
         cd ../docket_flutter
-        set -- web --release --base-href / --no-web-resources-cdn --output ../docket_server/web/app
+        set -- web --release --base-href / --pwa-strategy=none --no-web-resources-cdn --output ../docket_server/web/app
         flutter build "$@" || { flutter clean && flutter build "$@"; }
 
   # Companion Flutter apps that `serverpod start` can launch (Ctrl+R), keyed

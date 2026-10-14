@@ -1,0 +1,54 @@
+<section class="hero" aria-labelledby="page-title">
+  <div class="hero-copy">
+    <h1 id="page-title">Wait anywhere.</h1>
+    <p class="lead">Scan the code at the clinic desk and your place in line moves to your phone. Step out for food, the pharmacy or the car. Docket tells you when to head back.</p>
+    <p class="actions">
+      <a class="pill pill-danfo" href="/try">Try a live clinic</a>
+      <a class="action-link" href="/how-it-works">See how it works</a>
+    </p>
+  </div>
+  <figure class="hero-demo" data-hero>
+    <div class="demo">
+      <div class="ticket ticket-hero" id="hero-ticket" data-ticket data-state="waiting">
+        <div class="ticket-stub">
+          <p class="ticket-line">Consultation</p>
+          <p class="ticket-label">C-031</p>
+        </div>
+        <div class="ticket-body">
+          <div class="ticket-step" data-step="waiting" data-active>
+            <p class="ticket-copy">You're 3rd in line for Consultation. About 14 min.</p>
+            <ul class="ticket-strip">
+              <li>Line moved 40 s ago</li>
+              <li>Room 2 is seeing C-028</li>
+              <li>You're 2nd when C-029 is called</li>
+            </ul>
+          </div>
+          <div class="ticket-step" data-step="waiting">
+            <p class="ticket-copy">You're 2nd in line for Consultation. About 8 min.</p>
+            <ul class="ticket-strip">
+              <li>Line moved just now</li>
+              <li>Room 2 is seeing C-029</li>
+              <li>You're 1st when C-030 is called</li>
+            </ul>
+          </div>
+          <div class="ticket-step" data-step="heads-up">
+            <p class="ticket-headline">Start heading back</p>
+            <p class="ticket-copy">You're next after C-030.</p>
+          </div>
+          <div class="ticket-step" data-step="called">
+            <p class="ticket-headline">Your turn. Go to Room 2.</p>
+            <p class="ticket-copy"><span class="countdown" data-countdown="{{graceSeconds}}">{{graceClock}}</span> to confirm</p>
+          </div>
+          <div class="ticket-step" data-step="confirmed">
+            <p class="ticket-headline">Room 2 is expecting you</p>
+            <p class="ticket-copy"><span class="countdown" data-countdown="{{arrivalSeconds}}">{{arrivalClock}}</span> to get there</p>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="pill pill-register call-next" aria-controls="hero-ticket" data-call-next>Call next</button>
+    </div>
+    <figcaption class="demo-note">This is what a patient sees. Try it with your own phone.</figcaption>
+    <p class="visually-hidden" role="status" data-hero-status></p>
+  </figure>
+</section>
+<p class="evidence"><a href="/problem">At a public outpatient clinic in Rivers State, a visit took about two hours.</a></p>

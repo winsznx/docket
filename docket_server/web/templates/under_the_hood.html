@@ -1,0 +1,60 @@
+<header class="page-head">
+  <h1>Built on Serverpod 4.</h1>
+  <p class="lead">One Dart server runs the API, the live updates, the timers and this website. Here's what each Serverpod feature does in Docket.</p>
+</header>
+<div class="ideas with-diagram">
+  <dl class="prose pairs">
+    <div><dt>Endpoints</dt><dd>Every screen talks to the server through typed calls and a generated client.</dd></div>
+    <div><dt>Streaming methods and <code>session.messages</code></dt><dd>Tap Call next and every phone in the line moves at once.</dd></div>
+    <div><dt>Future calls</dt><dd>A missed call re-slots on a timer stored in the database, so a restart can't lose it.</dd></div>
+    <div><dt>ORM, transactions and <code>LockMode.forUpdate</code></dt><dd>Two desks pressing Call next at the same moment never call the same patient.</dd></div>
+    <div><dt>Client-side database</dt><dd>The desk keeps calling through an internet outage and syncs when the connection is back.</dd></div>
+    <div><dt><code>serverpod_auth_idp</code></dt><dd>Clinic staff sign in with email.</dd></div>
+    <div><dt>Web server, Relic routes and <code>FlutterRoute</code></dt><dd>This site, the app, the ticket's first paint and the PDF posters all come from the same server.</dd></div>
+    <div><dt>Serverpod Cloud</dt><dd>One command deploys the server with a managed Postgres database.</dd></div>
+    <div><dt>Insights and health probes</dt><dd>Logs, slow queries and health checks for the live app.</dd></div>
+    <div><dt><code>serverpod start</code></dt><dd>One command runs the server, the database and the app, with the MCP server the coding agent uses.</dd></div>
+  </dl>
+  <figure class="diagram">
+    <svg viewBox="0 0 360 330" width="360" height="330" role="img" aria-labelledby="diagram-title diagram-desc">
+      <title id="diagram-title">How Docket fits together</title>
+      <desc id="diagram-desc">The patient phone, the desk and the waiting-room board all reach one Serverpod 4 server through typed calls and streams. The server's endpoints, future calls and web server use Postgres, send Web Push alerts and send texts through Twilio. It all runs on Serverpod Cloud.</desc>
+      <g class="diagram-lines" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M60 30V70M300 30V70M60 70H300M180 30V120"/>
+        <path d="M180 156V240M60 240H300M60 240V262M180 240V262M300 240V262"/>
+        <rect x="12" y="262" width="96" height="30" rx="15"/>
+        <rect x="132" y="262" width="96" height="30" rx="15"/>
+        <rect x="246" y="262" width="108" height="30" rx="15"/>
+      </g>
+      <rect class="diagram-core" x="105" y="120" width="150" height="36" rx="18"/>
+      <g class="diagram-text" text-anchor="middle" font-size="15">
+        <text x="60" y="20" font-weight="700">Patient phone</text>
+        <text x="180" y="20" font-weight="700">Desk</text>
+        <text x="300" y="20" font-weight="700">Board</text>
+        <text class="diagram-core-text" x="180" y="143" font-size="16" font-weight="700">Serverpod 4</text>
+        <text x="60" y="282" font-size="14">Postgres</text>
+        <text x="180" y="282" font-size="14">Web Push</text>
+        <text x="300" y="282" font-size="14">Twilio SMS</text>
+      </g>
+      <g class="diagram-soft" text-anchor="end" font-size="13.5">
+        <text x="172" y="100">calls and streams</text>
+        <text x="172" y="184">Endpoints</text>
+        <text x="172" y="202">Future calls</text>
+        <text x="172" y="220">Web server</text>
+      </g>
+      <text class="diagram-soft" x="180" y="322" text-anchor="middle" font-size="13.5">All on Serverpod Cloud</text>
+    </svg>
+  </figure>
+  <section class="prose" aria-labelledby="code">
+    <h2 id="code">Read the code</h2>
+    <ul class="links">
+      <li><a href="https://github.com/winsznx/docket">The repository on GitHub</a></li>
+      <li><a href="https://github.com/winsznx/docket/blob/main/docs/ARCHITECTURE.md">Architecture notes</a></li>
+      <li><a href="https://github.com/winsznx/docket/tree/main/docket_server/test">Server tests</a></li>
+      <li><a href="https://github.com/winsznx/docket/tree/main/docket_flutter/test">App tests</a></li>
+      <li><a href="https://github.com/winsznx/docket/tree/main/e2e">Browser checks with Playwright</a></li>
+      <li><a href="https://github.com/winsznx/docket/blob/main/docket_server/test/unit/notify/web_push_test.dart">The Web Push test that reproduces the RFC 8291 example byte for byte</a></li>
+    </ul>
+    <p class="disclosure">Built by Popoola Timothy with Claude Code as the coding agent under his direction, using the Serverpod agent skills and MCP server from <code>serverpod start</code>. Every feature runs live on Serverpod Cloud.</p>
+  </section>
+</div>

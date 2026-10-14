@@ -1,0 +1,28 @@
+<header class="page-head">
+  <h1>The line only exists inside the room.</h1>
+  <p class="lead">Walk into a public outpatient clinic and your place in line is a paper number, or your name called aloud in the waiting room.</p>
+  <p>Leave to eat, pray, buy drugs or move the car, and you can lose it. Nothing tells you when to come back, so you sit and wait.</p>
+</header>
+<section class="idea" aria-labelledby="chart-title">
+  <h2 id="chart-title">How long one visit took, in minutes</h2>
+  <figure class="chart-figure">
+    {{{chartSvg}}}
+    <div class="visually-hidden"><table>
+      <caption>How long one outpatient visit took, in minutes</caption>
+      <thead>
+        <tr><th scope="col">Where</th><th scope="col">Measured by</th><th scope="col">Minutes</th></tr>
+      </thead>
+      <tbody>
+        {{#chartRows}}<tr><th scope="row">{{place}}</th><td>{{detail}}</td><td>{{minutes}}</td></tr>
+        {{/chartRows}}
+      </tbody>
+    </table></div>
+    <figcaption class="sources">
+      <h3>Sources</h3>
+      <ul>
+        {{#sources}}<li><a href="{{{url}}}">{{name}}</a></li>
+        {{/sources}}
+      </ul>
+    </figcaption>
+  </figure>
+</section>

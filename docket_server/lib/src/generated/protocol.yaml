@@ -42,6 +42,7 @@ sandbox:
   - addDemoWalkIns:
 smoke:
   - ticks:
+  - idle:
   - schedule:
   - runs:
 staff:

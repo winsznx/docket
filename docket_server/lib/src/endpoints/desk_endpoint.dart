@@ -167,6 +167,7 @@ class DeskEndpoint extends Endpoint {
         where: (t) => t.clinicId.equals(clinicId),
       );
       for (final line in lines) {
+        Views.presenceChanged(line.id!);
         await session.messages.postMessage(
           'line.${line.id}',
           LineChanged(

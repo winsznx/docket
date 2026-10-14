@@ -19,6 +19,23 @@ class SmokeEndpoint extends Endpoint {
     }
   }
 
+  /// Sends one value, stays silent for [seconds], then sends another, to
+  /// measure how long an idle stream survives Cloud's load balancer
+  /// (PRD 23).
+  Stream<SmokeTick> idle(Session session, int seconds) async* {
+    yield SmokeTick(
+      n: 1,
+      serverTime: DateTime.now().toUtc(),
+      serverId: session.serverpod.serverId,
+    );
+    await Future<void>.delayed(Duration(seconds: seconds.clamp(1, 1800)));
+    yield SmokeTick(
+      n: 2,
+      serverTime: DateTime.now().toUtc(),
+      serverId: session.serverpod.serverId,
+    );
+  }
+
   Future<SmokeRun> schedule(Session session, int delaySeconds) async {
     final due = DateTime.now().toUtc().add(
       Duration(seconds: delaySeconds.clamp(5, 900)),
