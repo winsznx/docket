@@ -59,6 +59,12 @@ class BoardController extends ChangeNotifier {
   final void Function(BoardView view)? onServerView;
 
   final Duration localPoll;
+
+  /// A read of the desk's database that takes longer than this is given up,
+  /// so one stuck read never stops the polling.
+  static const _readTimeout = Duration(seconds: 5);
+
+  bool _prepared = false;
   final DateTime Function() _serverNow;
   final DateTime Function() _deviceNow;
 
@@ -138,6 +144,10 @@ class BoardController extends ChangeNotifier {
     ServerClock.instance.observe(fresh.serverTime);
     _lastServer = fresh;
     onServerView?.call(fresh);
+    if (!_prepared) {
+      _prepared = true;
+      unawaited(local.prepare());
+    }
     if (_browserOffline) return;
     _apply(fresh, local: false);
   }
@@ -181,7 +191,9 @@ class BoardController extends ChangeNotifier {
     try {
       final last = _lastServer;
       final slug = last == null ? null : slugOfJoinUrl(last.joinUrl);
-      final fromDesk = await local.read(clinicSlug: slug);
+      final fromDesk = await local
+          .read(clinicSlug: slug)
+          .timeout(_readTimeout, onTimeout: () => null);
       if (fromDesk != null && _failed && !_disposed) {
         _apply(fromDesk, local: true);
       }

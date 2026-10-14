@@ -8,6 +8,11 @@ import 'board_logic.dart';
 
 /// Where the board reads calls from when its own stream is down.
 abstract class LocalBoardSource {
+  /// Opens the database while the network is up. The SQLite engine and its
+  /// worker load over the network, so a database first opened mid-outage
+  /// may never open.
+  Future<void> prepare();
+
   /// The board built from this browser's desk database, or null when this
   /// browser has no desk for the clinic with the slug [clinicSlug]. A null
   /// slug accepts any desk, for a board that has never reached the server.
@@ -22,10 +27,22 @@ class DeskDatabaseBoardSource implements LocalBoardSource {
   String? lastMiss;
 
   @override
+  Future<void> prepare() async {
+    try {
+      await LocalDb.open();
+    } on Object catch (error) {
+      _miss('The desk database is not available here: $error');
+    }
+  }
+
+  @override
   Future<BoardView?> read({String? clinicSlug}) async {
     try {
       final session = await LocalDb.open();
-      final meta = await DeskMeta.db.findFirstRow(session);
+      final meta = await DeskMeta.db.findFirstRow(
+        session,
+        orderBy: (t) => t.id,
+      );
       final json = meta?.lastViewJson;
       if (json == null) return _miss('The desk has not stored a view yet.');
       final desk = DeskView.fromJson(jsonDecode(json) as Map<String, dynamic>);

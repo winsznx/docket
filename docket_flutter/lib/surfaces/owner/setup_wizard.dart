@@ -151,7 +151,7 @@ class _SetupWizardState extends State<SetupWizard> {
       _error = null;
     });
     if (error != null) {
-      announce(context, error);
+      announce(context, error, snack: false);
       return;
     }
     setState(() {
@@ -248,7 +248,7 @@ class _SetupWizardState extends State<SetupWizard> {
         _busy = false;
         _step = _steps;
       });
-      announce(context, OwnerStrings.readyTitle(clinic.name));
+      announce(context, OwnerStrings.readyTitle(clinic.name), snack: false);
     } on Object catch (e) {
       if (!mounted) return;
       setState(() {

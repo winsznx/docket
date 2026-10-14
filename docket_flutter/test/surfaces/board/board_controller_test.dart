@@ -41,6 +41,10 @@ class _RecordingAnnouncer implements Announcer {
 class _FakeDesk implements LocalBoardSource {
   BoardView? view;
   final asked = <String?>[];
+  int prepared = 0;
+
+  @override
+  Future<void> prepare() async => prepared++;
 
   @override
   Future<BoardView?> read({String? clinicSlug}) async {
@@ -103,6 +107,7 @@ void main() {
     stream.add(_view());
     await tester.pump();
     expect(announcer.spoken, isEmpty);
+    expect(desk.prepared, 1, reason: 'The desk database opens while online.');
 
     now = _t0.add(const Duration(seconds: 3));
     stream.add(

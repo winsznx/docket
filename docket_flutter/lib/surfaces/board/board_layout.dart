@@ -266,7 +266,10 @@ class _Header extends StatelessWidget {
               ),
               if (isLocal)
                 Semantics(
+                  container: true,
+                  label: BoardStrings.localMode,
                   hint: BoardStrings.localModeHint,
+                  excludeSemantics: true,
                   child: DecoratedBox(
                     decoration: const ShapeDecoration(
                       color: DocketColors.danfo,
@@ -301,6 +304,7 @@ class _Header extends StatelessWidget {
                 ),
               if (status != null)
                 Semantics(
+                  container: true,
                   liveRegion: true,
                   child: Text(
                     status,
@@ -825,6 +829,7 @@ class BoardMessage extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: u * 110),
                     child: Semantics(
+                      container: true,
                       liveRegion: true,
                       child: Text(
                         message,

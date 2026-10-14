@@ -204,7 +204,7 @@ class _LineEditorState extends State<_LineEditor> {
     final local = fieldsOnly ? _localError() : null;
     if (local != null) {
       setState(() => _error = local);
-      announce(context, local);
+      announce(context, local, snack: false);
       return;
     }
     final line = fieldsOnly
@@ -366,7 +366,7 @@ class _RoomEditorState extends State<_RoomEditor> {
     final local = validateRoomName(_name.text);
     if (local != null) {
       setState(() => _error = local);
-      announce(context, local);
+      announce(context, local, snack: false);
       return;
     }
     setState(() {

@@ -88,11 +88,16 @@ class _BoardScreenState extends State<BoardScreen> {
   }
 
   void _openSettings() {
+    // The board is always night, so the sheet is too, whatever the
+    // system's color scheme.
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      builder: (context) =>
-          _BoardSettings(board: _board, announcer: _announcer),
+      backgroundColor: DocketColors.register,
+      builder: (context) => Theme(
+        data: docketTheme(Brightness.dark),
+        child: _BoardSettings(board: _board, announcer: _announcer),
+      ),
     );
   }
 
@@ -165,10 +170,12 @@ class _UnlockLayer extends StatelessWidget {
       button: true,
       label: BoardStrings.tapToTurnOn,
       onTap: onUnlock,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onUnlock,
-        child: const SizedBox.expand(),
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onUnlock,
+          child: const SizedBox.expand(),
+        ),
       ),
     );
   }
@@ -203,6 +210,7 @@ class _BoardSettings extends StatelessWidget {
         ),
         child: Align(
           alignment: Alignment.topLeft,
+          heightFactor: 1,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 560),
             child: ListenableBuilder(
@@ -242,6 +250,7 @@ class _BoardSettings extends StatelessWidget {
                       style: text.bodyMedium,
                     ),
                     VoiceSupport.unavailable => Semantics(
+                      container: true,
                       liveRegion: true,
                       child: Text(
                         BoardStrings.voiceUnavailable,

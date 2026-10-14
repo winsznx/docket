@@ -68,6 +68,7 @@ class _InviteScreenState extends State<InviteScreen> {
           membership.clinicName,
           _roleName(membership.role),
         ),
+        snack: false,
       );
     } on Object catch (e) {
       if (mounted) setState(() => _error = messageOf(e));

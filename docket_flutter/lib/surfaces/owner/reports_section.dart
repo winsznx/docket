@@ -136,16 +136,15 @@ class _ReportsSectionState extends State<ReportsSection> {
     return [
       const GroupTitle(OwnerStrings.arrivalsTitle),
       const SizedBox(height: DocketSpace.s16),
-      if (!anyone) ...[
+      if (anyone)
+        ArrivalsChart(
+          counts: totals,
+          firstHour: first,
+          lastHour: last,
+          currentHour: isToday ? Browser.hourIn(_clinic.timezone) : null,
+        )
+      else
         const Explanation(OwnerStrings.noArrivals),
-        const SizedBox(height: DocketSpace.s16),
-      ],
-      ArrivalsChart(
-        counts: totals,
-        firstHour: first,
-        lastHour: last,
-        currentHour: isToday ? Browser.hourIn(_clinic.timezone) : null,
-      ),
       const SizedBox(height: groupGap),
       for (final line in report.lines) ...[
         GroupTitle(line.lineName),

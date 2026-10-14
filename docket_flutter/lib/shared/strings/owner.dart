@@ -248,8 +248,8 @@ abstract final class OwnerStrings {
   static String posterFor(String line, String code) =>
       '$line poster, code $code';
   static const boardLead =
-      'The waiting-room board shows each call and says it aloud. Open the '
-      'link in a browser on the TV.';
+      'It shows each call and says it aloud. Open the link in a browser on '
+      'the TV.';
   static const boardHidden =
       "The board link is only shown when it's made. Make a new one to see it "
       'here.';

@@ -112,6 +112,7 @@ class ErrorLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
+    container: true,
     liveRegion: true,
     child: Text(
       message,
@@ -208,8 +209,8 @@ class LabeledField extends StatelessWidget {
   }
 }
 
-/// A link to hand to someone: the address itself, selectable, then Copy
-/// and Open.
+/// A link to hand to someone: the address itself, read out like any text,
+/// then Copy and Open.
 class LinkBlock extends StatelessWidget {
   const LinkBlock({
     super.key,
@@ -250,7 +251,7 @@ class LinkBlock extends StatelessWidget {
         ],
         if (title != null || explanation != null)
           const SizedBox(height: DocketSpace.s12),
-        SelectableText(
+        Text(
           url,
           style: text.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
         ),
@@ -277,14 +278,15 @@ class LinkBlock extends StatelessWidget {
   }
 }
 
-/// Tells the person what just happened: a snack bar on screen and the same
-/// words to a screen reader.
-void announce(BuildContext context, String message) {
+/// Tells the person what just happened: the words to a screen reader, and a
+/// snack bar on screen unless the page itself already says it.
+void announce(BuildContext context, String message, {bool snack = true}) {
   SemanticsService.sendAnnouncement(
     View.of(context),
     message,
     TextDirection.ltr,
   );
+  if (!snack) return;
   ScaffoldMessenger.maybeOf(context)
     ?..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(message)));

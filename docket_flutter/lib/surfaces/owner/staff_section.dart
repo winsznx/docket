@@ -117,6 +117,12 @@ class _StaffSectionState extends State<StaffSection> {
     }
   }
 
+  /// The server refuses to deactivate the last active owner, so the button
+  /// isn't offered.
+  static bool _isLastOwner(StaffMember member, List<StaffMember> staff) =>
+      member.role == StaffRole.owner &&
+      staff.where((m) => m.active && m.role == StaffRole.owner).length == 1;
+
   String _roleName(StaffRole role) => switch (role) {
     StaffRole.desk => OwnerStrings.roleDesk,
     StaffRole.owner => OwnerStrings.roleOwner,
@@ -232,7 +238,7 @@ class _StaffSectionState extends State<StaffSection> {
                       ),
                     ),
                   ),
-                  if (member.active)
+                  if (member.active && !_isLastOwner(member, staff))
                     DocketButton(
                       onPressed: () => _deactivate(member),
                       label: OwnerStrings.deactivate,

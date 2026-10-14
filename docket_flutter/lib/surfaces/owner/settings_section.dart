@@ -73,7 +73,7 @@ class _SettingsSectionState extends State<SettingsSection> {
     });
     final local = _firstError();
     if (local != null) {
-      announce(context, local);
+      announce(context, local, snack: false);
       return;
     }
     var settings = _start.copyWith(

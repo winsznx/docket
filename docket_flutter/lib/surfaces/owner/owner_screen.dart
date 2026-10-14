@@ -323,27 +323,32 @@ class _ClinicRow extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final note = this.note;
     return Semantics(
+      container: true,
       button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(DocketRadius.input),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DocketSpace.s12,
-            vertical: DocketSpace.s16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: text.headlineSmall?.copyWith(fontSize: 24),
-              ),
-              if (note != null) ...[
-                const SizedBox(height: DocketSpace.s4),
-                Explanation(note),
+      label: note == null ? title : '$title. $note',
+      onTap: onTap,
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(DocketRadius.input),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: DocketSpace.s12,
+              vertical: DocketSpace.s16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: text.headlineSmall?.copyWith(fontSize: 24),
+                ),
+                if (note != null) ...[
+                  const SizedBox(height: DocketSpace.s4),
+                  Explanation(note),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

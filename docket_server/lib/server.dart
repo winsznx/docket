@@ -13,6 +13,7 @@ import 'src/web/rate_limit.dart';
 import 'src/web/routes/app_config_route.dart';
 import 'src/web/routes/first_paint_route.dart';
 import 'src/web/routes/poster_route.dart';
+import 'src/web/routes/ticket_shell_route.dart';
 import 'src/web/routes/twilio_status_route.dart';
 import 'src/web/site/site.dart';
 
@@ -51,6 +52,10 @@ void run(List<String> args) async {
 
   final appDir = Directory(Uri(path: 'web/app').toFilePath());
   if (appDir.existsSync()) {
+    pod.webServer.addRoute(
+      TicketShellRoute(File(Uri(path: 'web/app/index.html').toFilePath())),
+      '/t/:token',
+    );
     pod.webServer.addRoute(FlutterRoute(appDir, enableWasmHeaders: false));
   } else {
     pod.webServer.addRoute(
