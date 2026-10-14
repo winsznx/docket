@@ -47,6 +47,7 @@ class BoardEndpoint extends Endpoint {
 
   static DocketException _invalid() => DocketException(
     code: DocketErrorCode.clinicNotFound,
-    message: "This board link doesn't work any more. Get the new one from the owner page.",
+    message:
+        "This board link doesn't work any more. Get the new one from the owner page.",
   );
 }

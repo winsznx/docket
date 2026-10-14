@@ -14,6 +14,7 @@ import 'line_queue.dart';
 import 'miss_rule.dart';
 import 'notification_policy.dart';
 import 'ordering.dart';
+import 'timers.dart';
 import 'transitions.dart';
 import 'views.dart';
 
@@ -85,7 +86,13 @@ abstract final class QueueService {
         confirmedAt: now,
       );
       await Ticket.db.updateRow(session, updated, transaction: t);
-      final line = await _bump(session, t, fx, lines[ticket.lineId]!, 'confirmed');
+      final line = await _bump(
+        session,
+        t,
+        fx,
+        lines[ticket.lineId]!,
+        'confirmed',
+      );
       await _event(
         session,
         t,
@@ -326,7 +333,13 @@ abstract final class QueueService {
         final lines = await _lockLines(session, t, [pre.lineId]);
         final ticket = await _ticket(session, t, ticketId);
         _guard(TicketCommand.recall, ticket);
-        final line = await _bump(session, t, fx, lines[ticket.lineId]!, 'recall');
+        final line = await _bump(
+          session,
+          t,
+          fx,
+          lines[ticket.lineId]!,
+          'recall',
+        );
         final event = await _event(
           session,
           t,
@@ -360,7 +373,13 @@ abstract final class QueueService {
           roomId: room.id,
         );
         await Ticket.db.updateRow(session, updated, transaction: t);
-        final line = await _bump(session, t, fx, lines[ticket.lineId]!, 'start');
+        final line = await _bump(
+          session,
+          t,
+          fx,
+          lines[ticket.lineId]!,
+          'start',
+        );
         await _event(
           session,
           t,
@@ -386,7 +405,13 @@ abstract final class QueueService {
         );
         await Ticket.db.updateRow(session, updated, transaction: t);
         await _sample(session, t, updated, now);
-        final line = await _bump(session, t, fx, lines[ticket.lineId]!, 'finish');
+        final line = await _bump(
+          session,
+          t,
+          fx,
+          lines[ticket.lineId]!,
+          'finish',
+        );
         await _event(
           session,
           t,
@@ -492,7 +517,11 @@ abstract final class QueueService {
         );
         return _Applied(added.ticket, token: added.token);
 
-      case TransferAction(:final ticketId, :final targetLineId, :final newTicketId):
+      case TransferAction(
+        :final ticketId,
+        :final targetLineId,
+        :final newTicketId,
+      ):
         final pre = await _ticket(session, t, ticketId, clinic: clinic);
         final target = await _line(session, t, clinic, targetLineId);
         if (target.id == pre.lineId) {
@@ -586,6 +615,15 @@ abstract final class QueueService {
           ticket.callVersion != callVersion) {
         return;
       }
+      final sent = await TicketEvent.db.findFirstRow(
+        session,
+        where: (x) =>
+            x.ticketId.equals(ticketId) &
+            x.type.equals(TicketEventType.graceReminderSent) &
+            (x.at >= ticket.calledAt!),
+        transaction: t,
+      );
+      if (sent != null) return;
       final clinic = (await Clinic.db.findById(session, ticket.clinicId))!;
       await _event(
         session,
@@ -596,7 +634,14 @@ abstract final class QueueService {
         actor: Actor.system,
         line: lines[ticket.lineId]!,
       );
-      await _notify(session, t, fx, clinic, ticket, NotificationKind.graceReminder);
+      await _notify(
+        session,
+        t,
+        fx,
+        clinic,
+        ticket,
+        NotificationKind.graceReminder,
+      );
     });
     await _afterCommit(session, fx);
   }
@@ -654,7 +699,11 @@ abstract final class QueueService {
     await _afterCommit(session, fx);
   }
 
-  static Future<void> closeDay(Session session, Clinic clinic, Actor actor) async {
+  static Future<void> closeDay(
+    Session session,
+    Clinic clinic,
+    Actor actor,
+  ) async {
     final fx = _Effects();
     await session.db.transaction(
       (t) => _closeDay(session, t, fx, clinic, actor),
@@ -827,8 +876,7 @@ abstract final class QueueService {
               : Copy.dayClosedDesk,
         );
       }
-    } else if (forJoin &&
-        minutes < ClinicTime.minutesOf(clinic.openTime)) {
+    } else if (forJoin && minutes < ClinicTime.minutesOf(clinic.openTime)) {
       throw DocketException(
         code: DocketErrorCode.dayClosed,
         message: Copy.notOpenYet(clinic.name, clinic.openTime),
@@ -893,7 +941,8 @@ abstract final class QueueService {
     PriorityReason? priorityReason,
     String? priorityNote,
   }) async {
-    if (eventType == TicketEventType.priorityInserted && priorityReason == null) {
+    if (eventType == TicketEventType.priorityInserted &&
+        priorityReason == null) {
       throw DocketException(
         code: DocketErrorCode.validation,
         message: Copy.reasonNeeded,
@@ -1381,7 +1430,14 @@ abstract final class QueueService {
       _cancelGrace(fx, ticket);
       _cancelArrival(fx, ticket);
       if (target == TicketState.closed) {
-        await _notify(session, t, fx, clinic, updated, NotificationKind.dayClosed);
+        await _notify(
+          session,
+          t,
+          fx,
+          clinic,
+          updated,
+          NotificationKind.dayClosed,
+        );
       }
     }
     final day = await ServiceDay.db.findFirstRow(
@@ -1426,8 +1482,14 @@ abstract final class QueueService {
       ServiceSample(
         lineId: ticket.lineId,
         roomId: ticket.roomId!,
-        serviceSeconds: finishedAt.difference(started).inSeconds.clamp(1, 86400),
-        callToStartSeconds: started.difference(called).inSeconds.clamp(0, 86400),
+        serviceSeconds: finishedAt
+            .difference(started)
+            .inSeconds
+            .clamp(1, 86400),
+        callToStartSeconds: started
+            .difference(called)
+            .inSeconds
+            .clamp(0, 86400),
         at: finishedAt,
       ),
       transaction: t,
@@ -1597,6 +1659,37 @@ abstract final class QueueService {
   /// the commit, so a failure here is logged and left to the sweeps and the
   /// 20-second stream heartbeat (PRD 10).
   static Future<void> _afterCommit(Session session, _Effects fx) async {
+    if (Timers.scheduling(session.serverpod)) {
+      await _scheduleTimers(session, fx);
+    }
+    for (final entry in fx.lineVersions.entries) {
+      await _post(
+        session,
+        'line.${entry.key}',
+        LineChanged(
+          lineId: entry.key,
+          version: entry.value,
+          reason: fx.lineReasons[entry.key] ?? 'changed',
+        ),
+      );
+    }
+    for (final entry in fx.ticketChanged.entries) {
+      await _post(
+        session,
+        'ticket.${entry.key}',
+        TicketChanged(ticketId: entry.key, version: entry.value),
+      );
+    }
+    for (final clinicId in fx.clinicChanged) {
+      await _post(
+        session,
+        'clinic.$clinicId',
+        ClinicChanged(clinicId: clinicId),
+      );
+    }
+  }
+
+  static Future<void> _scheduleTimers(Session session, _Effects fx) async {
     final calls = session.serverpod.futureCalls;
     for (final id in fx.cancels) {
       try {
@@ -1622,27 +1715,6 @@ abstract final class QueueService {
         session.log('[notify] enqueue $id failed: $e', level: LogLevel.error);
       }
     }
-    for (final entry in fx.lineVersions.entries) {
-      await _post(
-        session,
-        'line.${entry.key}',
-        LineChanged(
-          lineId: entry.key,
-          version: entry.value,
-          reason: fx.lineReasons[entry.key] ?? 'changed',
-        ),
-      );
-    }
-    for (final entry in fx.ticketChanged.entries) {
-      await _post(
-        session,
-        'ticket.${entry.key}',
-        TicketChanged(ticketId: entry.key, version: entry.value),
-      );
-    }
-    for (final clinicId in fx.clinicChanged) {
-      await _post(session, 'clinic.$clinicId', ClinicChanged(clinicId: clinicId));
-    }
   }
 
   static Future<void> _post(
@@ -1653,7 +1725,10 @@ abstract final class QueueService {
     try {
       await session.messages.postMessage(channel, message);
     } on Exception catch (e) {
-      session.log('[queue] post to $channel failed: $e', level: LogLevel.warning);
+      session.log(
+        '[queue] post to $channel failed: $e',
+        level: LogLevel.warning,
+      );
     }
   }
 }

@@ -157,8 +157,10 @@ abstract final class Views {
     );
   }
 
-  static Future<String> currentServiceDate(Session session, Clinic clinic) async =>
-      LineQueue.serviceDateNow(clinic);
+  static Future<String> currentServiceDate(
+    Session session,
+    Clinic clinic,
+  ) async => LineQueue.serviceDateNow(clinic);
 
   /// Rooms that count for the ETA and the patient's desk-offline banner:
   /// open rooms of the line with a desk heartbeat in the last 45 seconds.
@@ -190,7 +192,10 @@ abstract final class Views {
     );
   }
 
-  static Future<PatientView> patient(Session session, UuidValue ticketId) async {
+  static Future<PatientView> patient(
+    Session session,
+    UuidValue ticketId,
+  ) async {
     final ticket = await Ticket.db.findById(session, ticketId);
     if (ticket == null) {
       throw DocketException(
@@ -266,7 +271,8 @@ abstract final class Views {
       }
     }
 
-    final graceEnds = ticket.state == TicketState.called && ticket.calledAt != null
+    final graceEnds =
+        ticket.state == TicketState.called && ticket.calledAt != null
         ? ticket.calledAt!.add(Duration(seconds: clinic.graceSeconds))
         : null;
     final arrivalEnds =
@@ -442,10 +448,11 @@ class LineSnapshot {
   /// The label in front of the room this ticket was called to, or the most
   /// recently called ticket on the line.
   String? nowServing(UuidValue? roomId) {
-    final active = view.tickets
-        .where((t) => t.state != TicketState.waiting && t.calledAt != null)
-        .toList()
-      ..sort((a, b) => b.calledAt!.compareTo(a.calledAt!));
+    final active =
+        view.tickets
+            .where((t) => t.state != TicketState.waiting && t.calledAt != null)
+            .toList()
+          ..sort((a, b) => b.calledAt!.compareTo(a.calledAt!));
     if (active.isEmpty) return null;
     if (roomId != null) {
       for (final t in active) {

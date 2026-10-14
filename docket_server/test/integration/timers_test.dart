@@ -54,24 +54,26 @@ void main() {
         expect(view.state, TicketState.expired);
       });
 
-      test('when the same timer runs twice then the second run changes nothing',
-          () async {
-        await endpoints.futureCalls.ticketTimers.graceExpired(
-          builder,
-          first.view.ticketId,
-          1,
-        );
-        final once = await endpoints.ticket.get(builder, first.ticketToken);
-        await endpoints.futureCalls.ticketTimers.graceExpired(
-          builder,
-          first.view.ticketId,
-          1,
-        );
-        final twice = await endpoints.ticket.get(builder, first.ticketToken);
-        expect(twice.state, once.state);
-        expect(twice.reslotCount, 1);
-        expect(twice.version, once.version);
-      });
+      test(
+        'when the same timer runs twice then the second run changes nothing',
+        () async {
+          await endpoints.futureCalls.ticketTimers.graceExpired(
+            builder,
+            first.view.ticketId,
+            1,
+          );
+          final once = await endpoints.ticket.get(builder, first.ticketToken);
+          await endpoints.futureCalls.ticketTimers.graceExpired(
+            builder,
+            first.view.ticketId,
+            1,
+          );
+          final twice = await endpoints.ticket.get(builder, first.ticketToken);
+          expect(twice.state, once.state);
+          expect(twice.reslotCount, 1);
+          expect(twice.version, once.version);
+        },
+      );
 
       test('when a stale callVersion fires then it is a no-op', () async {
         await endpoints.futureCalls.ticketTimers.graceExpired(
@@ -103,22 +105,24 @@ void main() {
         expect(view.reslotCount, 1);
       });
 
-      test('when grace runs out then the miss notification is queued once',
-          () async {
-        await endpoints.futureCalls.ticketTimers.graceExpired(
-          builder,
-          first.view.ticketId,
-          1,
-        );
-        final events = await TicketEvent.db.find(
-          builder.build(),
-          where: (t) =>
-              t.ticketId.equals(first.view.ticketId) &
-              t.type.equals(TicketEventType.graceExpired),
-        );
-        expect(events, hasLength(1));
-        expect(events.single.reason, 'reslotted');
-      });
+      test(
+        'when grace runs out then the miss notification is queued once',
+        () async {
+          await endpoints.futureCalls.ticketTimers.graceExpired(
+            builder,
+            first.view.ticketId,
+            1,
+          );
+          final events = await TicketEvent.db.find(
+            builder.build(),
+            where: (t) =>
+                t.ticketId.equals(first.view.ticketId) &
+                t.type.equals(TicketEventType.graceExpired),
+          );
+          expect(events, hasLength(1));
+          expect(events.single.reason, 'reslotted');
+        },
+      );
     },
   );
 }

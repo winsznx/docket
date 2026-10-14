@@ -15,7 +15,9 @@ class OverdueTimersIndicator extends HealthIndicator<int> {
 
   @override
   Future<HealthCheckResult> check() async {
-    final session = await Serverpod.instance.createSession(enableLogging: false);
+    final session = await Serverpod.instance.createSession(
+      enableLogging: false,
+    );
     try {
       final result = await session.db.unsafeQuery(
         'SELECT count(*) FROM serverpod_future_call '
@@ -30,4 +32,18 @@ class OverdueTimersIndicator extends HealthIndicator<int> {
       await session.close();
     }
   }
+}
+
+/// Says how timers run on this server: Serverpod future calls, or the
+/// in-process sweep when the plan has future calls off.
+class TimerModeIndicator extends HealthIndicator<String> {
+  TimerModeIndicator(this.mode);
+
+  final String Function() mode;
+
+  @override
+  String get name => 'docket:timer-mode';
+
+  @override
+  Future<HealthCheckResult> check() async => pass(observedValue: mode());
 }

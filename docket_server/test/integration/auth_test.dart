@@ -24,7 +24,13 @@ void main() {
             name: 'Grace Clinic',
             slug: 'grace-${DateTime.now().microsecondsSinceEpoch}',
             timezone: 'Africa/Lagos',
-            lines: [LineSetup(name: 'Consultation', code: 'C', defaultServiceSeconds: 480)],
+            lines: [
+              LineSetup(
+                name: 'Consultation',
+                code: 'C',
+                defaultServiceSeconds: 480,
+              ),
+            ],
             rooms: [RoomSetup(name: 'Room 2', lineCode: 'C')],
           ),
         );
@@ -48,59 +54,78 @@ void main() {
         );
       });
 
-      test('when a desk member calls owner methods then they are refused',
-          () async {
-        expect(
-          await endpoints.desk.getView(as(deskId), clinic.id!, null),
-          isA<DeskView>(),
-        );
-        await expectLater(
-          endpoints.owner.listStaff(as(deskId), clinic.id!, null),
-          refused(DocketErrorCode.notOwner),
-        );
-        await expectLater(
-          endpoints.owner.rotateBoardToken(as(deskId), clinic.id!, null),
-          refused(DocketErrorCode.notOwner),
-        );
-      });
+      test(
+        'when a desk member calls owner methods then they are refused',
+        () async {
+          expect(
+            await endpoints.desk.getView(as(deskId), clinic.id!, null),
+            isA<DeskView>(),
+          );
+          await expectLater(
+            endpoints.owner.listStaff(as(deskId), clinic.id!, null),
+            refused(DocketErrorCode.notOwner),
+          );
+          await expectLater(
+            endpoints.owner.rotateBoardToken(as(deskId), clinic.id!, null),
+            refused(DocketErrorCode.notOwner),
+          );
+        },
+      );
 
-      test('when a desk member is deactivated then the desk refuses them',
-          () async {
-        final staff = await endpoints.owner.listStaff(as(ownerId), clinic.id!, null);
-        final member = staff.firstWhere((s) => s.userIdentifier == deskId);
-        await endpoints.owner.deactivateStaff(
-          as(ownerId),
-          clinic.id!,
-          member.id!,
-          null,
-        );
-        await expectLater(
-          endpoints.desk.getView(as(deskId), clinic.id!, null),
-          refused(DocketErrorCode.notStaff),
-        );
-      });
+      test(
+        'when a desk member is deactivated then the desk refuses them',
+        () async {
+          final staff = await endpoints.owner.listStaff(
+            as(ownerId),
+            clinic.id!,
+            null,
+          );
+          final member = staff.firstWhere((s) => s.userIdentifier == deskId);
+          await endpoints.owner.deactivateStaff(
+            as(ownerId),
+            clinic.id!,
+            member.id!,
+            null,
+          );
+          await expectLater(
+            endpoints.desk.getView(as(deskId), clinic.id!, null),
+            refused(DocketErrorCode.notStaff),
+          );
+        },
+      );
 
       test('when the last owner is deactivated then it is refused', () async {
-        final staff = await endpoints.owner.listStaff(as(ownerId), clinic.id!, null);
+        final staff = await endpoints.owner.listStaff(
+          as(ownerId),
+          clinic.id!,
+          null,
+        );
         final owner = staff.firstWhere((s) => s.userIdentifier == ownerId);
         await expectLater(
-          endpoints.owner.deactivateStaff(as(ownerId), clinic.id!, owner.id!, null),
+          endpoints.owner.deactivateStaff(
+            as(ownerId),
+            clinic.id!,
+            owner.id!,
+            null,
+          ),
           refused(DocketErrorCode.validation),
         );
       });
 
-      test('when a sandbox token is used on a real clinic then it is refused',
-          () async {
-        final f = await Fixture.create(builder, endpoints);
-        await expectLater(
-          endpoints.desk.getView(builder, clinic.id!, f.token),
-          refused(DocketErrorCode.notStaff),
-        );
-        await expectLater(
-          endpoints.owner.getOwnerView(builder, clinic.id!, f.token),
-          refused(DocketErrorCode.notStaff),
-        );
-      });
+      test(
+        'when a sandbox token is used on a real clinic then it is refused',
+        () async {
+          final f = await Fixture.create(builder, endpoints);
+          await expectLater(
+            endpoints.desk.getView(builder, clinic.id!, f.token),
+            refused(DocketErrorCode.notStaff),
+          );
+          await expectLater(
+            endpoints.owner.getOwnerView(builder, clinic.id!, f.token),
+            refused(DocketErrorCode.notStaff),
+          );
+        },
+      );
 
       test('when an invite is reused then it is refused', () async {
         final invite = await endpoints.owner.createInvite(

@@ -25,7 +25,8 @@ class SandboxEndpoint extends Endpoint {
     final sandboxToken = Tokens.mint();
     final boardToken = Tokens.mint();
     final expires = DateTime.now().toUtc().add(lifetime);
-    final slug = 'sandbox-${suffix.toLowerCase()}-${Tokens.mint(bytes: 3).toLowerCase().replaceAll(RegExp('[^a-z0-9]'), '')}';
+    final slug =
+        'sandbox-${suffix.toLowerCase()}-${Tokens.mint(bytes: 3).toLowerCase().replaceAll(RegExp('[^a-z0-9]'), '')}';
     final clinic = await session.db.transaction((t) async {
       final clinic = await Clinic.db.insertRow(
         session,
@@ -45,7 +46,12 @@ class SandboxEndpoint extends Endpoint {
       );
       final consultation = await Line.db.insertRow(
         session,
-        Line(clinicId: clinic.id!, name: 'Consultation', code: 'C', sortOrder: 0),
+        Line(
+          clinicId: clinic.id!,
+          name: 'Consultation',
+          code: 'C',
+          sortOrder: 0,
+        ),
         transaction: t,
       );
       final lab = await Line.db.insertRow(
@@ -60,9 +66,24 @@ class SandboxEndpoint extends Endpoint {
         transaction: t,
       );
       await Room.db.insert(session, [
-        Room(clinicId: clinic.id!, lineId: consultation.id!, name: 'Room 1', sortOrder: 0),
-        Room(clinicId: clinic.id!, lineId: consultation.id!, name: 'Room 2', sortOrder: 1),
-        Room(clinicId: clinic.id!, lineId: lab.id!, name: 'Lab Bench', sortOrder: 2),
+        Room(
+          clinicId: clinic.id!,
+          lineId: consultation.id!,
+          name: 'Room 1',
+          sortOrder: 0,
+        ),
+        Room(
+          clinicId: clinic.id!,
+          lineId: consultation.id!,
+          name: 'Room 2',
+          sortOrder: 1,
+        ),
+        Room(
+          clinicId: clinic.id!,
+          lineId: lab.id!,
+          name: 'Lab Bench',
+          sortOrder: 2,
+        ),
       ], transaction: t);
       return clinic;
     });
@@ -99,7 +120,10 @@ class SandboxEndpoint extends Endpoint {
           t.isSandbox.equals(true),
     );
     if (clinic == null) {
-      throw DocketException(code: DocketErrorCode.notStaff, message: Copy.notStaff);
+      throw DocketException(
+        code: DocketErrorCode.notStaff,
+        message: Copy.notStaff,
+      );
     }
     if (clinic.sandboxExpiresAt != null &&
         DateTime.now().toUtc().isAfter(clinic.sandboxExpiresAt!)) {

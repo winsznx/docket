@@ -5,6 +5,8 @@ import 'package:serverpod_auth_idp_server/providers/email.dart';
 import 'package:serverpod_cloud_storage/serverpod_cloud_storage.dart';
 
 import 'src/domain/clinic_time.dart';
+import 'src/domain/local_scheduler.dart';
+import 'src/domain/timers.dart';
 import 'src/generated/serverpod.dart';
 import 'src/web/health.dart';
 import 'src/web/rate_limit.dart';
@@ -14,12 +16,17 @@ import 'src/web/routes/poster_route.dart';
 import 'src/web/routes/twilio_status_route.dart';
 import 'src/web/site/site.dart';
 
+String _timerMode = 'starting';
+
 void run(List<String> args) async {
   ClinicTime.ensureLoaded();
   final pod = Serverpod(
     args,
     healthConfig: HealthConfig(
-      additionalReadinessIndicators: [OverdueTimersIndicator()],
+      additionalReadinessIndicators: [
+        OverdueTimersIndicator(),
+        TimerModeIndicator(() => _timerMode),
+      ],
     ),
   );
 
@@ -66,6 +73,12 @@ void run(List<String> args) async {
   );
 
   await pod.start();
+  _timerMode = Timers.mode(pod);
+
+  if (!Timers.executing(pod)) {
+    LocalScheduler(pod).start();
+    return;
+  }
 
   // Recurring calls register after start, since scheduling before start
   // throws. Each is cancelled by identifier first so a restart never stacks

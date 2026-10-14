@@ -169,7 +169,11 @@ class DeskEndpoint extends Endpoint {
       for (final line in lines) {
         await session.messages.postMessage(
           'line.${line.id}',
-          LineChanged(lineId: line.id!, version: line.version, reason: 'presence'),
+          LineChanged(
+            lineId: line.id!,
+            version: line.version,
+            reason: 'presence',
+          ),
         );
       }
     }

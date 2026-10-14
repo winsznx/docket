@@ -49,7 +49,11 @@ void main() {
     test('when a state is terminal then no command leaves it', () {
       for (final from in Transitions.terminal) {
         for (final command in TicketCommand.values) {
-          expect(Transitions.allowed(command, from), isFalse, reason: '$command $from');
+          expect(
+            Transitions.allowed(command, from),
+            isFalse,
+            reason: '$command $from',
+          );
         }
       }
     });

@@ -26,7 +26,11 @@ void main() {
             linkCipher: 'sealed',
           ),
         );
-        await endpoints.desk.act(builder, Desk().closeDay(kept.clinicId), kept.token);
+        await endpoints.desk.act(
+          builder,
+          Desk().closeDay(kept.clinicId),
+          kept.token,
+        );
         final day = await ServiceDay.db.findFirstRow(
           session,
           where: (t) => t.clinicId.equals(kept.clinicId),
@@ -34,7 +38,9 @@ void main() {
         await ServiceDay.db.updateRow(
           session,
           day!.copyWith(
-            closedAt: DateTime.now().toUtc().subtract(const Duration(hours: 25)),
+            closedAt: DateTime.now().toUtc().subtract(
+              const Duration(hours: 25),
+            ),
           ),
         );
         final sandbox = (await Clinic.db.findById(session, gone.clinicId))!;

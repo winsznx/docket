@@ -10,9 +10,12 @@ void main() {
       (2, 3, MissOutcome.reslot),
       (3, 3, MissOutcome.expire),
     ]) {
-      test('when reslotCount $count and maxReslots $max then ${outcome.name}', () {
-        expect(MissRule.decide(reslotCount: count, maxReslots: max), outcome);
-      });
+      test(
+        'when reslotCount $count and maxReslots $max then ${outcome.name}',
+        () {
+          expect(MissRule.decide(reslotCount: count, maxReslots: max), outcome);
+        },
+      );
     }
   });
 }

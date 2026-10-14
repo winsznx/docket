@@ -48,15 +48,18 @@ void main() {
       expect(Ordering.renumbered(3), [1024, 2048, 3072]);
     });
 
-    test('when re-slotting repeatedly into the same gap then renumbering is eventually asked', () {
-      var keys = [1024.0, 2048.0];
-      var asked = false;
-      for (var i = 0; i < 60 && !asked; i++) {
-        final p = Ordering.reslot(keys, 2);
-        asked = p.needsRenumber;
-        keys = [keys.first, p.sortKey];
-      }
-      expect(asked, isTrue);
-    });
+    test(
+      'when re-slotting repeatedly into the same gap then renumbering is eventually asked',
+      () {
+        var keys = [1024.0, 2048.0];
+        var asked = false;
+        for (var i = 0; i < 60 && !asked; i++) {
+          final p = Ordering.reslot(keys, 2);
+          asked = p.needsRenumber;
+          keys = [keys.first, p.sortKey];
+        }
+        expect(asked, isTrue);
+      },
+    );
   });
 }

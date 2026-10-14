@@ -175,33 +175,43 @@ void main() {
         );
       });
 
-      test('when a ticket in service is transferred then a linked ticket '
-          'waits in the target line and the old view carries the new token', () async {
-        final f = await Fixture.create(builder, endpoints);
-        final desk = Desk();
-        final a = await f.join(builder, endpoints);
-        await endpoints.desk.act(builder, desk.callNext(f.room1.id!), f.token);
-        await endpoints.desk.act(
-          builder,
-          desk.start(a.view.ticketId, f.room1.id!),
-          f.token,
-        );
-        final moved = await endpoints.desk.act(
-          builder,
-          desk.transfer(a.view.ticketId, f.lab.id!),
-          f.token,
-        );
-        expect(moved.outcome, ActionOutcome.applied);
-        expect(moved.ticket!.label, 'L-001');
-        expect(moved.ticket!.state, TicketState.waiting);
-        final old = await endpoints.ticket.get(builder, a.ticketToken);
-        expect(old.state, TicketState.transferred);
-        expect(old.transferredToLabel, 'L-001');
-        expect(old.transferredToLineName, 'Lab');
-        final next = await endpoints.ticket.get(builder, old.transferredToToken!);
-        expect(next.ticketId, moved.ticket!.id);
-        expect(next.state, TicketState.waiting);
-      });
+      test(
+        'when a ticket in service is transferred then a linked ticket '
+        'waits in the target line and the old view carries the new token',
+        () async {
+          final f = await Fixture.create(builder, endpoints);
+          final desk = Desk();
+          final a = await f.join(builder, endpoints);
+          await endpoints.desk.act(
+            builder,
+            desk.callNext(f.room1.id!),
+            f.token,
+          );
+          await endpoints.desk.act(
+            builder,
+            desk.start(a.view.ticketId, f.room1.id!),
+            f.token,
+          );
+          final moved = await endpoints.desk.act(
+            builder,
+            desk.transfer(a.view.ticketId, f.lab.id!),
+            f.token,
+          );
+          expect(moved.outcome, ActionOutcome.applied);
+          expect(moved.ticket!.label, 'L-001');
+          expect(moved.ticket!.state, TicketState.waiting);
+          final old = await endpoints.ticket.get(builder, a.ticketToken);
+          expect(old.state, TicketState.transferred);
+          expect(old.transferredToLabel, 'L-001');
+          expect(old.transferredToLineName, 'Lab');
+          final next = await endpoints.ticket.get(
+            builder,
+            old.transferredToToken!,
+          );
+          expect(next.ticketId, moved.ticket!.id);
+          expect(next.state, TicketState.waiting);
+        },
+      );
     },
   );
 }

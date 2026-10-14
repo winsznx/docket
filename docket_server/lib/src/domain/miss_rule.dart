@@ -2,6 +2,8 @@
 enum MissOutcome { reslot, expire }
 
 abstract final class MissRule {
-  static MissOutcome decide({required int reslotCount, required int maxReslots}) =>
-      reslotCount < maxReslots ? MissOutcome.reslot : MissOutcome.expire;
+  static MissOutcome decide({
+    required int reslotCount,
+    required int maxReslots,
+  }) => reslotCount < maxReslots ? MissOutcome.reslot : MissOutcome.expire;
 }

@@ -55,11 +55,17 @@ abstract final class ClinicAuth {
           message: Copy.sandboxExpired,
         );
       }
-      return (clinic: clinic, actor: const Actor(ActorType.sandbox, ref: 'sandbox'));
+      return (
+        clinic: clinic,
+        actor: const Actor(ActorType.sandbox, ref: 'sandbox'),
+      );
     }
     final user = session.authenticated?.userIdentifier;
     if (user == null) {
-      throw DocketException(code: DocketErrorCode.notStaff, message: Copy.notStaff);
+      throw DocketException(
+        code: DocketErrorCode.notStaff,
+        message: Copy.notStaff,
+      );
     }
     final member = await StaffMember.db.findFirstRow(
       session,
@@ -69,10 +75,16 @@ abstract final class ClinicAuth {
           t.active.equals(true),
     );
     if (member == null) {
-      throw DocketException(code: DocketErrorCode.notStaff, message: Copy.notStaff);
+      throw DocketException(
+        code: DocketErrorCode.notStaff,
+        message: Copy.notStaff,
+      );
     }
     if (ownerOnly && member.role != StaffRole.owner) {
-      throw DocketException(code: DocketErrorCode.notOwner, message: Copy.notOwner);
+      throw DocketException(
+        code: DocketErrorCode.notOwner,
+        message: Copy.notOwner,
+      );
     }
     return (
       clinic: clinic,

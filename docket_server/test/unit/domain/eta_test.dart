@@ -29,7 +29,10 @@ void main() {
     });
 
     test('then it is never zero or negative', () {
-      expect(Eta.seconds(position: 0, activeRooms: 1, medianServiceSeconds: 0), 1);
+      expect(
+        Eta.seconds(position: 0, activeRooms: 1, medianServiceSeconds: 0),
+        1,
+      );
       expect(Eta.minutes(1), 1);
     });
   });

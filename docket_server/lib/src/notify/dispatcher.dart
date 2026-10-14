@@ -4,6 +4,7 @@ import 'package:serverpod/serverpod.dart';
 
 import '../app_config.dart';
 import '../domain/eta.dart';
+import '../domain/timers.dart';
 import '../domain/notification_policy.dart';
 import '../domain/views.dart';
 import '../generated/future_calls.dart';
@@ -49,6 +50,7 @@ abstract final class Dispatcher {
         session,
         row.copyWith(error: outcome.error),
       );
+      if (!Timers.scheduling(session.serverpod)) return;
       await session.serverpod.futureCalls
           .callWithDelay(
             retryDelays[attempt - 1],
@@ -219,6 +221,7 @@ abstract final class Dispatcher {
       ],
       ignoreConflicts: true,
     );
+    if (!Timers.scheduling(session.serverpod)) return;
     for (final row in rows) {
       await session.serverpod.futureCalls
           .callWithDelay(Duration.zero, identifier: 'dispatch:${row.id}:1')

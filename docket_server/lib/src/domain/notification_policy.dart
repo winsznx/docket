@@ -36,7 +36,8 @@ abstract final class NotificationPolicy {
     required int reslotCount,
     String? suffix,
   }) {
-    final base = '$ticketId:${kind.name}:${channel.name}:$callVersion:$reslotCount';
+    final base =
+        '$ticketId:${kind.name}:${channel.name}:$callVersion:$reslotCount';
     return suffix == null ? base : '$base:$suffix';
   }
 }

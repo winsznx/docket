@@ -52,7 +52,8 @@ class StaffEndpoint extends Endpoint {
       );
       final existing = await StaffMember.db.findFirstRow(
         session,
-        where: (x) => x.clinicId.equals(clinic.id!) & x.userIdentifier.equals(user),
+        where: (x) =>
+            x.clinicId.equals(clinic.id!) & x.userIdentifier.equals(user),
         transaction: t,
       );
       if (existing == null) {
@@ -80,7 +81,8 @@ class StaffEndpoint extends Endpoint {
     session.log('[auth] invite accepted for ${clinic.slug}');
     final member = await StaffMember.db.findFirstRow(
       session,
-      where: (x) => x.clinicId.equals(clinic.id!) & x.userIdentifier.equals(user),
+      where: (x) =>
+          x.clinicId.equals(clinic.id!) & x.userIdentifier.equals(user),
     );
     return Membership(
       clinicId: clinic.id!,

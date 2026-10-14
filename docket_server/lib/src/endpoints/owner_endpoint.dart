@@ -30,7 +30,10 @@ class OwnerEndpoint extends Endpoint {
       _slug.hasMatch(slug) && !slug.startsWith('sandbox'),
       'Use 3 to 40 lowercase letters, numbers or hyphens for the link.',
     );
-    _check(ClinicTime.isValidZone(setup.timezone), "That timezone isn't known.");
+    _check(
+      ClinicTime.isValidZone(setup.timezone),
+      "That timezone isn't known.",
+    );
     _check(
       setup.lines.isNotEmpty && setup.lines.length <= 8,
       'Add between one and eight lines.',
@@ -163,7 +166,11 @@ class OwnerEndpoint extends Endpoint {
     range(settings.reslotOffset, 1, 10, 'Places back after a miss');
     range(settings.maxReslots, 0, 3, 'Misses allowed');
     range(settings.autoCloseAfterMinutes, 0, 600, 'Auto close');
-    for (final t in [settings.openTime, settings.joinCutoffTime, settings.closeTime]) {
+    for (final t in [
+      settings.openTime,
+      settings.joinCutoffTime,
+      settings.closeTime,
+    ]) {
       _check(ClinicTime.isValidHhmm(t), 'Use 24-hour times like 08:00.');
     }
     _check(
@@ -173,7 +180,10 @@ class OwnerEndpoint extends Endpoint {
               ClinicTime.minutesOf(settings.closeTime),
       'Opening has to come before the last join, and that before closing.',
     );
-    _check(ClinicTime.isValidZone(settings.timezone), "That timezone isn't known.");
+    _check(
+      ClinicTime.isValidZone(settings.timezone),
+      "That timezone isn't known.",
+    );
     _check(
       !(settings.smsEnabled && auth.clinic.isSandbox),
       "Sandboxes don't send texts.",
@@ -251,7 +261,11 @@ class OwnerEndpoint extends Endpoint {
       );
       await session.messages.postMessage(
         'line.${saved.id}',
-        LineChanged(lineId: saved.id!, version: saved.version, reason: 'settings'),
+        LineChanged(
+          lineId: saved.id!,
+          version: saved.version,
+          reason: 'settings',
+        ),
       );
     }
     await _clinicChanged(session, clinicId);
@@ -270,7 +284,10 @@ class OwnerEndpoint extends Endpoint {
       'Give the room a name.',
     );
     final line = await Line.db.findById(session, room.lineId);
-    _check(line?.clinicId == clinicId, 'Pick a line for the room to call from.');
+    _check(
+      line?.clinicId == clinicId,
+      'Pick a line for the room to call from.',
+    );
     final Room saved;
     if (room.id == null) {
       saved = await Room.db.insertRow(
@@ -346,7 +363,10 @@ class OwnerEndpoint extends Endpoint {
   ) async {
     await ClinicAuth.owner(session, clinicId, sandboxToken);
     final member = await StaffMember.db.findById(session, staffMemberId);
-    _check(member?.clinicId == clinicId, "That person isn't on this clinic's staff.");
+    _check(
+      member?.clinicId == clinicId,
+      "That person isn't on this clinic's staff.",
+    );
     if (member!.role == StaffRole.owner) {
       final owners = await StaffMember.db.count(
         session,
@@ -433,7 +453,11 @@ class OwnerEndpoint extends Endpoint {
   ) async {
     final auth = await ClinicAuth.owner(session, clinicId, sandboxToken);
     _date(serviceDate);
-    final start = ClinicTime.atLocal(auth.clinic.timezone, serviceDate, '00:00');
+    final start = ClinicTime.atLocal(
+      auth.clinic.timezone,
+      serviceDate,
+      '00:00',
+    );
     final end = start.add(const Duration(days: 1));
     DateTime? cursor;
     if (before != null) {
@@ -460,7 +484,11 @@ class OwnerEndpoint extends Endpoint {
   ) async {
     final auth = await ClinicAuth.owner(session, clinicId, sandboxToken);
     _date(serviceDate);
-    final start = ClinicTime.atLocal(auth.clinic.timezone, serviceDate, '00:00');
+    final start = ClinicTime.atLocal(
+      auth.clinic.timezone,
+      serviceDate,
+      '00:00',
+    );
     final end = start.add(const Duration(days: 1));
     return Notification.db.find(
       session,

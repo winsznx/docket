@@ -1,5 +1,6 @@
 import 'package:serverpod/serverpod.dart';
 
+import '../domain/timers.dart';
 import '../generated/future_calls.dart';
 import '../generated/protocol.dart';
 
@@ -26,6 +27,13 @@ class SmokeEndpoint extends Endpoint {
       session,
       SmokeRun(label: 'cloud-smoke', scheduledFor: due),
     );
+    if (!Timers.scheduling(session.serverpod)) {
+      throw DocketException(
+        code: DocketErrorCode.validation,
+        message:
+            'Future calls are off on this server, so nothing was scheduled.',
+      );
+    }
     await session.serverpod.futureCalls
         .callAtTime(due, identifier: 'smoke:${run.id}')
         .smoke
