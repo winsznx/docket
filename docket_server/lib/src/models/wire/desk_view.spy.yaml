@@ -8,4 +8,6 @@ fields:
   lines: List<LineView>
   rooms: List<RoomView>
   joinUrl: String
+  reslotOffset: int
+  maxReslots: int
   serverTime: DateTime

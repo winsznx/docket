@@ -275,7 +275,8 @@ abstract final class Views {
       );
     }
     final early = snap.view.sampleCount < Eta.samplesForConfidence;
-    final nowServing = snap.nowServing(ticket.roomId);
+    final serving = snap.nowServingTicket(ticket.roomId);
+    final nowServing = serving?.label;
     final nextAfter = position != null && index > 0
         ? waiting[index - 1].label
         : null;
@@ -346,6 +347,9 @@ abstract final class Views {
           ? null
           : presence.roomNames[ticket.roomId],
       nowServingLabel: nowServing,
+      nowServingRoomName: serving?.roomId == null
+          ? null
+          : presence.roomNames[serving!.roomId],
       nextAfterLabel: nextAfter,
       graceEndsAt: graceEnds,
       arrivalEndsAt: arrivalEnds,
@@ -425,6 +429,8 @@ abstract final class Views {
           ),
       ],
       joinUrl: AppConfig.joinUrl(session.serverpod, clinic.slug),
+      reslotOffset: clinic.reslotOffset,
+      maxReslots: clinic.maxReslots,
       serverTime: DateTime.now().toUtc(),
     );
   }
@@ -512,9 +518,11 @@ class LineSnapshot {
   List<TicketView> get waiting =>
       view.tickets.where((t) => t.state == TicketState.waiting).toList();
 
-  /// The label in front of the room this ticket was called to, or the most
+  String? nowServing(UuidValue? roomId) => nowServingTicket(roomId)?.label;
+
+  /// The ticket in front of the room this ticket was called to, or the most
   /// recently called ticket on the line.
-  String? nowServing(UuidValue? roomId) {
+  TicketView? nowServingTicket(UuidValue? roomId) {
     final active =
         view.tickets
             .where((t) => t.state != TicketState.waiting && t.calledAt != null)
@@ -523,9 +531,9 @@ class LineSnapshot {
     if (active.isEmpty) return null;
     if (roomId != null) {
       for (final t in active) {
-        if (t.roomId == roomId) return t.label;
+        if (t.roomId == roomId) return t;
       }
     }
-    return active.first.label;
+    return active.first;
   }
 }

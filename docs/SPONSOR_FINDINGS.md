@@ -66,8 +66,8 @@ Everything that surprised us while building Docket on Serverpod 4 and Serverpod 
 ### F7. On Serverpod Cloud's small compute, Docket's server work runs about 20 times slower than on a laptop
 - Versions: Serverpod 4.0.4, Serverpod Cloud Starter, compute "small, 256 MB, 1 podlet", region Europe, client in Lagos.
 - Reproduction: `loadtest/tool/timing.dart` and `loadtest/bin/smoke.dart dbping` against the deployed API.
-- Expected and actual: a raw `SELECT 1` from the podlet takes a median 6.3 ms over 20 runs, and a call with no database work takes 176 ms from Lagos, which is network. Call next takes 1.1 to 1.4 s on Cloud against 28 to 64 ms on an M1 Pro, and the Cloud session log puts 0.83 s of it inside the server for 13 queries. A fixed CPU loop is timed on both to compare (see SPONSOR_BEHAVIOUR).
-- Impact: the tap-to-phone time on Cloud is several times the local number, so the README quotes Cloud numbers separately.
+- Expected and actual: a raw `SELECT 1` from the podlet takes a median 6.3 ms over 20 runs, and a call with no database work takes 176 ms from Lagos, which is network. Call next takes 1.1 to 1.4 s on Cloud against 28 to 64 ms on an M1 Pro, and the Cloud session log puts 0.83 s of it inside the server for 13 queries. The same fixed CPU loop (`smoke.cpu`, 20 million integer steps) takes 805 ms on the podlet and 38 ms on the M1 Pro, about 21 times slower, while an ORM primary-key read from the podlet has a median of 4.8 ms over 20. So the time is CPU on the small compute, not the database.
+- Impact: the tap-to-phone time on Cloud is several times the local number, so the README quotes Cloud numbers separately. A larger compute size on the Growth plan is the fix on our side (NEEDS-TIM 1).
 - Suggested fix: show the compute's CPU share next to its memory in `scloud project show`, so a team can tell a slow query from a slow podlet.
 - Upstream: not filed.
 

@@ -11,6 +11,7 @@ fields:
   etaIsEstimate: bool
   roomName: String?
   nowServingLabel: String?
+  nowServingRoomName: String?
   nextAfterLabel: String?
   graceEndsAt: DateTime?
   arrivalEndsAt: DateTime?

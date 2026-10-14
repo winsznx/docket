@@ -27,6 +27,7 @@ abstract class PatientView
     required this.etaIsEstimate,
     this.roomName,
     this.nowServingLabel,
+    this.nowServingRoomName,
     this.nextAfterLabel,
     this.graceEndsAt,
     this.arrivalEndsAt,
@@ -61,6 +62,7 @@ abstract class PatientView
     required bool etaIsEstimate,
     String? roomName,
     String? nowServingLabel,
+    String? nowServingRoomName,
     String? nextAfterLabel,
     DateTime? graceEndsAt,
     DateTime? arrivalEndsAt,
@@ -102,6 +104,7 @@ abstract class PatientView
       ),
       roomName: jsonSerialization['roomName'] as String?,
       nowServingLabel: jsonSerialization['nowServingLabel'] as String?,
+      nowServingRoomName: jsonSerialization['nowServingRoomName'] as String?,
       nextAfterLabel: jsonSerialization['nextAfterLabel'] as String?,
       graceEndsAt: jsonSerialization['graceEndsAt'] == null
           ? null
@@ -172,6 +175,8 @@ abstract class PatientView
 
   String? nowServingLabel;
 
+  String? nowServingRoomName;
+
   String? nextAfterLabel;
 
   DateTime? graceEndsAt;
@@ -227,6 +232,7 @@ abstract class PatientView
     bool? etaIsEstimate,
     String? roomName,
     String? nowServingLabel,
+    String? nowServingRoomName,
     String? nextAfterLabel,
     DateTime? graceEndsAt,
     DateTime? arrivalEndsAt,
@@ -263,6 +269,7 @@ abstract class PatientView
       'etaIsEstimate': etaIsEstimate,
       if (roomName != null) 'roomName': roomName,
       if (nowServingLabel != null) 'nowServingLabel': nowServingLabel,
+      if (nowServingRoomName != null) 'nowServingRoomName': nowServingRoomName,
       if (nextAfterLabel != null) 'nextAfterLabel': nextAfterLabel,
       if (graceEndsAt != null) 'graceEndsAt': graceEndsAt?.toJson(),
       if (arrivalEndsAt != null) 'arrivalEndsAt': arrivalEndsAt?.toJson(),
@@ -302,6 +309,7 @@ abstract class PatientView
       'etaIsEstimate': etaIsEstimate,
       if (roomName != null) 'roomName': roomName,
       if (nowServingLabel != null) 'nowServingLabel': nowServingLabel,
+      if (nowServingRoomName != null) 'nowServingRoomName': nowServingRoomName,
       if (nextAfterLabel != null) 'nextAfterLabel': nextAfterLabel,
       if (graceEndsAt != null) 'graceEndsAt': graceEndsAt?.toJson(),
       if (arrivalEndsAt != null) 'arrivalEndsAt': arrivalEndsAt?.toJson(),
@@ -347,6 +355,7 @@ class _PatientViewImpl extends PatientView {
     required bool etaIsEstimate,
     String? roomName,
     String? nowServingLabel,
+    String? nowServingRoomName,
     String? nextAfterLabel,
     DateTime? graceEndsAt,
     DateTime? arrivalEndsAt,
@@ -379,6 +388,7 @@ class _PatientViewImpl extends PatientView {
          etaIsEstimate: etaIsEstimate,
          roomName: roomName,
          nowServingLabel: nowServingLabel,
+         nowServingRoomName: nowServingRoomName,
          nextAfterLabel: nextAfterLabel,
          graceEndsAt: graceEndsAt,
          arrivalEndsAt: arrivalEndsAt,
@@ -417,6 +427,7 @@ class _PatientViewImpl extends PatientView {
     bool? etaIsEstimate,
     Object? roomName = _Undefined,
     Object? nowServingLabel = _Undefined,
+    Object? nowServingRoomName = _Undefined,
     Object? nextAfterLabel = _Undefined,
     Object? graceEndsAt = _Undefined,
     Object? arrivalEndsAt = _Undefined,
@@ -452,6 +463,9 @@ class _PatientViewImpl extends PatientView {
       nowServingLabel: nowServingLabel is String?
           ? nowServingLabel
           : this.nowServingLabel,
+      nowServingRoomName: nowServingRoomName is String?
+          ? nowServingRoomName
+          : this.nowServingRoomName,
       nextAfterLabel: nextAfterLabel is String?
           ? nextAfterLabel
           : this.nextAfterLabel,

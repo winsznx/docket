@@ -27,6 +27,8 @@ abstract class DeskView
     required this.lines,
     required this.rooms,
     required this.joinUrl,
+    required this.reslotOffset,
+    required this.maxReslots,
     required this.serverTime,
   });
 
@@ -39,6 +41,8 @@ abstract class DeskView
     required List<_itxv0afl.LineView> lines,
     required List<_ieuleg7d.RoomView> rooms,
     required String joinUrl,
+    required int reslotOffset,
+    required int maxReslots,
     required DateTime serverTime,
   }) = _DeskViewImpl;
 
@@ -60,6 +64,8 @@ abstract class DeskView
         jsonSerialization['rooms'],
       ),
       joinUrl: jsonSerialization['joinUrl'] as String,
+      reslotOffset: jsonSerialization['reslotOffset'] as int,
+      maxReslots: jsonSerialization['maxReslots'] as int,
       serverTime: _is.DateTimeJsonExtension.fromJson(
         jsonSerialization['serverTime'],
       ),
@@ -82,6 +88,10 @@ abstract class DeskView
 
   String joinUrl;
 
+  int reslotOffset;
+
+  int maxReslots;
+
   DateTime serverTime;
 
   /// Returns a shallow copy of this [DeskView]
@@ -96,6 +106,8 @@ abstract class DeskView
     List<_itxv0afl.LineView>? lines,
     List<_ieuleg7d.RoomView>? rooms,
     String? joinUrl,
+    int? reslotOffset,
+    int? maxReslots,
     DateTime? serverTime,
   });
   @override
@@ -110,6 +122,8 @@ abstract class DeskView
       'lines': lines.toJson(valueToJson: (v) => v.toJson()),
       'rooms': rooms.toJson(valueToJson: (v) => v.toJson()),
       'joinUrl': joinUrl,
+      'reslotOffset': reslotOffset,
+      'maxReslots': maxReslots,
       'serverTime': serverTime.toJson(),
     };
   }
@@ -126,6 +140,8 @@ abstract class DeskView
       'lines': lines.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'rooms': rooms.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'joinUrl': joinUrl,
+      'reslotOffset': reslotOffset,
+      'maxReslots': maxReslots,
       'serverTime': serverTime.toJson(),
     };
   }
@@ -148,6 +164,8 @@ class _DeskViewImpl extends DeskView {
     required List<_itxv0afl.LineView> lines,
     required List<_ieuleg7d.RoomView> rooms,
     required String joinUrl,
+    required int reslotOffset,
+    required int maxReslots,
     required DateTime serverTime,
   }) : super._(
          clinicId: clinicId,
@@ -158,6 +176,8 @@ class _DeskViewImpl extends DeskView {
          lines: lines,
          rooms: rooms,
          joinUrl: joinUrl,
+         reslotOffset: reslotOffset,
+         maxReslots: maxReslots,
          serverTime: serverTime,
        );
 
@@ -174,6 +194,8 @@ class _DeskViewImpl extends DeskView {
     List<_itxv0afl.LineView>? lines,
     List<_ieuleg7d.RoomView>? rooms,
     String? joinUrl,
+    int? reslotOffset,
+    int? maxReslots,
     DateTime? serverTime,
   }) {
     return DeskView(
@@ -185,6 +207,8 @@ class _DeskViewImpl extends DeskView {
       lines: lines ?? this.lines.map((e0) => e0.copyWith()).toList(),
       rooms: rooms ?? this.rooms.map((e0) => e0.copyWith()).toList(),
       joinUrl: joinUrl ?? this.joinUrl,
+      reslotOffset: reslotOffset ?? this.reslotOffset,
+      maxReslots: maxReslots ?? this.maxReslots,
       serverTime: serverTime ?? this.serverTime,
     );
   }
